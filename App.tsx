@@ -24,6 +24,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -33,6 +34,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
+      <Icon name={"venus"} size={50} />
       <Text
         style={[
           styles.sectionTitle,
@@ -54,6 +56,14 @@ function Section({children, title}: SectionProps): React.JSX.Element {
     </View>
   );
 }
+
+// <key>NSAppTransportSecurity</key>
+// <dict>
+//   <key>NSAllowsArbitraryLoads</key>
+//   <false/>
+//   <key>NSAllowsLocalNetworking</key>
+//   <true/>
+// </dict>
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
