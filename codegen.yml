@@ -1,0 +1,9 @@
+overwrite: true
+schema: "https://green-light-backend-04c79b6adf93.herokuapp.com/graphql"
+documents: "./documents/**/*.ts"
+generates:
+  ./generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
