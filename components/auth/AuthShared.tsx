@@ -21,6 +21,6 @@ export const TextInput = styled(forwardRef(BaseTextInput))`
   background-color: rgba(78, 19, 19, 0.15);
   padding: 15px 7px;
   border-radius: 4px;
-  color: white;
+  color: ${props => props.theme.fontColor};
   margin-bottom: ${(props: TextInputProps) => (props.lastOne ? '15px' : '8px')};
 `;

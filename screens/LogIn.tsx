@@ -1,10 +1,10 @@
-import {gql, useMutation} from '@apollo/client';
+import {gql, useMutation, useReactiveVar} from '@apollo/client';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import AuthLayout from '../components/auth/AuthLayout';
 import {TextInput} from '../components/auth/AuthShared';
 import {useForm} from 'react-hook-form';
 import AuthButton from '../components/auth/AuthButton';
-import {logUserIn} from '../apollo';
+import {colorModeVar, logUserIn} from '../apollo';
 import {RootStackParamList} from '../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
@@ -29,6 +29,8 @@ const LOGIN_MUTATION = gql`
 `;
 
 const Login = ({route}: LoginNavigationProps) => {
+  const colorMode: 'light' | 'dark' = useReactiveVar(colorModeVar);
+  console.log(colorMode);
   const passwordRef: MutableRefObject<null> = useRef(null);
 
   const {register, handleSubmit, setValue, watch} = useForm<LoginFormData>({
@@ -60,6 +62,7 @@ const Login = ({route}: LoginNavigationProps) => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [logInMutation, {loading, error}] = useMutation(LOGIN_MUTATION, {
     onCompleted,
   });
@@ -84,7 +87,11 @@ const Login = ({route}: LoginNavigationProps) => {
         placeholder="Username"
         returnKeyType="next"
         autoCapitalize="none"
-        placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
+        placeholderTextColor={
+          colorMode === 'dark'
+            ? 'rgba(255, 255, 255, 0.6)'
+            : 'rgba(38, 38, 38, 0.6)'
+        }
         onSubmitEditing={() => onNext(passwordRef)}
         onChangeText={text => setValue('username', text)}
       />
@@ -95,7 +102,11 @@ const Login = ({route}: LoginNavigationProps) => {
         secureTextEntry
         returnKeyType="done"
         lastOne={true}
-        placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
+        placeholderTextColor={
+          colorMode === 'dark'
+            ? 'rgba(255, 255, 255, 0.6)'
+            : 'rgba(38, 38, 38, 0.6)'
+        }
         onSubmitEditing={handleSubmit(onValid)}
         onChangeText={text => setValue('password', text)}
       />
