@@ -15,8 +15,8 @@ function App(): React.JSX.Element | null {
   const isLoggedIn: boolean = useReactiveVar(isLoggedInVar);
 
   const preload = async (): Promise<boolean> => {
+    // await AsyncStorage.setItem('token', '');
     const token = await AsyncStorage.getItem('token');
-    // const token = false; // if you want to force log out
     if (token) {
       tokenVar(token);
       return true;

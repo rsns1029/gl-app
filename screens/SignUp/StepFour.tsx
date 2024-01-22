@@ -22,7 +22,7 @@ const BtnContainer = styled.View`
 const IconContainer = styled.View`
   flex: 4;
   align-items: center;
-  width: 100%;
+  width: 80%;
 `;
 
 const SkipTouchableOpacity = styled.TouchableOpacity`
@@ -43,6 +43,7 @@ const ExplainText = styled.Text`
   font-size: 25px;
   margin-bottom: 10px;
   align-self: baseline;
+  align-content: center;
 `;
 
 const SubExplainText = styled.Text`
@@ -75,7 +76,7 @@ export default function StepFour({navigation}: StepFourProps) {
   };
 
   const HeaderBar = () => (
-    <StepBar currentStep={4} style={{flex: 1}} onBeforeNavigate={handleNext} />
+    <StepBar currentStep={4} onBeforeNavigate={handleNext} />
   );
 
   useEffect(() => {

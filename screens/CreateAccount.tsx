@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ConditionStep from './SignUp/ConditionStep';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../shared/shared.types';
+import {useTheme} from 'styled-components';
 
 type CreateAccountProps = NativeStackScreenProps<
   RootStackParamList,
@@ -20,6 +21,8 @@ type CreateAccountProps = NativeStackScreenProps<
 const Stack = createStackNavigator();
 
 export default function CreateAccount({navigation}: CreateAccountProps) {
+  const theme = useTheme();
+
   return (
     <SignUpAppContextProvider>
       <Stack.Navigator
@@ -29,6 +32,12 @@ export default function CreateAccount({navigation}: CreateAccountProps) {
           headerTintColor: 'white',
           headerTitle: 'Create Account',
           headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: theme.bgColor,
+            shadowColor: 'transparent',
+            elevation: 0,
+          },
+          cardStyle: {backgroundColor: theme.bgColor},
           headerLeft: () => {
             return (
               <TouchableOpacity

@@ -7,7 +7,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {useForm} from 'react-hook-form';
 import {SignUpAppContext} from './SignUpContext';
 import {ReactNativeFile} from 'apollo-upload-client';
-import {useCreateAccountMutation} from '../../generated/graphql';
+import {
+  CreateAccountMutation,
+  useCreateAccountMutation,
+} from '../../generated/graphql';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../shared/shared.types';
 
@@ -80,11 +83,10 @@ export default function ConditionStep({navigation}: ConditionStepProps) {
   const [errorMsg, setErrorMsg] = useState('');
 
   const [createAccountMutation, {loading}] = useCreateAccountMutation({
-    onCompleted: data => {
+    onCompleted: (data: CreateAccountMutation): void => {
       const {
         createAccount: {ok, error},
       } = data;
-
       const {username, password} = getValues();
       console.log(username, password);
       console.log('navigating');
@@ -107,23 +109,11 @@ export default function ConditionStep({navigation}: ConditionStepProps) {
     formState: {errors},
   } = useForm();
 
-  const onValid = (): void => {
+  const onValid = async () => {
     if (!agree) {
       setErrorMsg('Please, Agree the term');
       return;
     }
-    // console.log("Data : ", data);
-    // const dataEntries = Object.entries(data);
-    // const filteredEntries = dataEntries.filter(
-    //   ([key, value]) => value !== null && value !== ""
-    // );
-    // const filteredData = filteredEntries.reduce((acc, [key, value]) => {
-    //   return {
-    //     ...acc,
-    //     [key]: value,
-    //   };
-    // }, {});
-
     if (!loading) {
       const {
         username,
@@ -137,7 +127,7 @@ export default function ConditionStep({navigation}: ConditionStepProps) {
         avatar,
       } = getValues();
 
-      createAccountMutation({
+      await createAccountMutation({
         variables: {
           username,
           password,
@@ -166,31 +156,16 @@ export default function ConditionStep({navigation}: ConditionStepProps) {
   } = useContext(SignUpAppContext);
 
   useEffect(() => {
-    console.log('useEffect in condition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log(
-      username,
-      password,
-      email,
-      sex,
-      interestingSex,
-      birthDay,
-      avatarUri,
-      phoneNo,
-      instaUsername,
-    );
-
     setValue('username', username);
     setValue('password', password);
     setValue('email', email);
     setValue('phoneNo', phoneNo);
     setValue('sex', sex);
-
     const [yearStr, monthStr, dayStr] = birthDay.split('/');
     const year = parseInt(yearStr, 10);
     const month = parseInt(monthStr, 10);
     const day = parseInt(dayStr, 10);
     const birthDayDate = new Date(year, month - 1, day).toISOString();
-
     setValue('birthDay', birthDayDate);
 
     if (avatarUri) {
