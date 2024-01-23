@@ -15,7 +15,6 @@ function App(): React.JSX.Element | null {
   const isLoggedIn: boolean = useReactiveVar(isLoggedInVar);
 
   const preload = async (): Promise<boolean> => {
-    // await AsyncStorage.setItem('token', '');
     const token = await AsyncStorage.getItem('token');
     if (token) {
       tokenVar(token);

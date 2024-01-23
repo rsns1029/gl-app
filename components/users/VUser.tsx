@@ -21,7 +21,8 @@ const UserName = styled.Text`
 
 export default function VUser({avatar, username}: vuserProps) {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => console.log('logs here for rendering profile image')}>
       <Container>
         <AvatarImg avatarPath={avatar} />
         <UserName>
