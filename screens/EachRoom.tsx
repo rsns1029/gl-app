@@ -311,13 +311,11 @@ export default function EachRoom({route, navigation}: RoomProps) {
   messages.reverse();
 
   return (
-    <TouchableWithoutFeedback
-      onPress={dismissKeyboard}
-      disabled={Platform.OS == 'web'}
-      style={{flex: 1}}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView
         style={{flex: 1, backgroundColor: 'black'}}
-        behavior="height"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={64} // Adjust this value as much as header
         enabled>
         <ScreenLayout loading={loading}>
           <FlatList

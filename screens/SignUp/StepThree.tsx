@@ -41,7 +41,7 @@ export default function StepThree({navigation}: stepThreeProps) {
   };
 
   const HeaderBar = () => (
-    <StepBar currentStep={3} style={{flex: 1}} onBeforeNavigate={handleNext} />
+    <StepBar currentStep={3} onBeforeNavigate={handleNext} />
   );
 
   useEffect(() => {

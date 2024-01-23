@@ -8,7 +8,7 @@ import {useTheme} from 'styled-components';
 import {RootStackParamList} from '../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-const NativeStack = createStackNavigator();
+const NativeStack = createStackNavigator<RootStackParamList>();
 
 type MessagesNavProps = NativeStackScreenProps<
   RootStackParamList,

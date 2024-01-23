@@ -14,17 +14,22 @@ const Container = styled.View`
   margin-top: 20px;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
 `;
 
 const StepBtn = styled.TouchableOpacity`
   background-color: gray;
-  padding: 10px;
   border-radius: 10px;
-  margin-right: 10px;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 15%;
+  height: 70%;
 `;
 
 const Text = styled.Text`
   color: white;
+  font-size: 17px;
 `;
 
 export default function StepBar({

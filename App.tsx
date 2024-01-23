@@ -16,7 +16,6 @@ function App(): React.JSX.Element | null {
 
   const preload = async (): Promise<boolean> => {
     const token = await AsyncStorage.getItem('token');
-    // const token = false; // if you want to force log out
     if (token) {
       tokenVar(token);
       return true;

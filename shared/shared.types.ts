@@ -6,13 +6,14 @@ export type RootStackParamList = {
   StackLogin: {username: string; password: string} | undefined;
   Welcome: any;
   CreateAccount: any;
-  EachRoom: any;
+  EachRoom: {id: number; talkingTo: User | undefined};
   ConditionStep: any;
   StepFour: any;
   StepBar: any;
   StepOne: any;
   StepTwo: any;
   StepThree: any;
+  Rooms: any;
 };
 
 export interface User {

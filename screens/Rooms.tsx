@@ -6,6 +6,7 @@ import ScreenLayout from '../components/ScreenLayout';
 import {MATCH_FRAGMENT, ROOM_FRAGMENT} from '../fragments';
 import styled from 'styled-components/native';
 import HList from '../components/users/HList';
+import {Room} from '../generated/graphql.ts';
 
 const SEE_ROOMS_QUERY = gql`
   query seeRooms {
@@ -69,20 +70,27 @@ const PostImage = styled.Image`
   height: 200px;
 `;
 
+interface ChatDataProps {
+  seeRooms: Array<Room> | null;
+}
+
 export default function Rooms() {
   const noDataImgSrc = require('../assets/noData.png');
 
   console.log('see room 1 : ');
 
-  const {data: chatData, loading: chatLoading} = useQuery(SEE_ROOMS_QUERY, {
-    fetchPolicy: 'network-only',
-  });
+  const {data: chatData, loading: chatLoading} = useQuery<ChatDataProps>(
+    SEE_ROOMS_QUERY,
+    {
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const {data: matchData, loading: matchLoading} = useQuery(SEE_MATCHES_QUERY, {
     fetchPolicy: 'network-only',
   });
 
-  const renderItem = ({item: room}: {item: any}) => <RoomItem {...room} />;
+  const renderItem = ({item: room}: any) => <RoomItem {...room} />;
 
   const ChatListEmptyComponent = () => {
     if (chatData?.seeRooms?.length === 0) {

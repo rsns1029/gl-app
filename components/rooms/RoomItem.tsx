@@ -50,12 +50,14 @@ export default function RoomItem({users, unreadTotal, id}: RoomItemProps) {
 
   const navigation = useNavigation<RoomItemNavigationProps>();
 
-  const talkingTo = users.find(user => user.username !== meData?.me?.username);
+  const talkingTo: User = users.find(
+    user => user.username !== meData?.me?.username,
+  )!;
 
   const goToRoom = () =>
     navigation.navigate('EachRoom', {
-      id,
-      talkingTo,
+      id: id,
+      talkingTo: talkingTo,
     });
 
   return (

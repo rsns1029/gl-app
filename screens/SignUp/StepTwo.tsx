@@ -110,7 +110,7 @@ export default function StepTwo({navigation}: stepTwoProps) {
   };
 
   const HeaderBar = () => (
-    <StepBar currentStep={2} style={{flex: 1}} onBeforeNavigate={handleNext} />
+    <StepBar currentStep={2} onBeforeNavigate={handleNext} />
   );
 
   useEffect(() => {

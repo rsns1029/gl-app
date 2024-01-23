@@ -4,6 +4,7 @@ import {
   TextInput as RNTextInput,
   TextInputProps as RNTInputProps,
 } from 'react-native';
+import {useTheme} from 'styled-components';
 
 interface TextInputProps extends RNTInputProps {
   lastOne?: boolean;
@@ -14,7 +15,15 @@ const BaseTextInput = (
   {lastOne, ...restProps}: TextInputProps,
   ref: Ref<RNTextInput>,
 ) => {
-  return <RNTextInput {...restProps} ref={ref} />;
+  const theme = useTheme();
+
+  return (
+    <RNTextInput
+      {...restProps}
+      ref={ref}
+      placeholderTextColor={theme.placeHolderFontColor}
+    />
+  );
 };
 
 export const TextInput = styled(forwardRef(BaseTextInput))`
