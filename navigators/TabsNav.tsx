@@ -4,8 +4,33 @@ import EmptyScreen from '../screens/EmptyScreen';
 import TabIcon from '../components/nav/TabIcon';
 import {useTheme} from 'styled-components';
 import MapScreen from '../screens/MapScreen';
+import {createStackNavigator} from '@react-navigation/stack';
+import Profile from '../screens/Profile';
+import EditProfile from '../screens/EditProfile';
+import {colors} from '../colors';
 
 const Tabs = createBottomTabNavigator();
+const ProfileStack = createStackNavigator();
+
+const ProfileStackScreen: React.FC = () => {
+  return (
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name="MyProfile"
+        component={Profile}
+        options={{
+          headerShown: true,
+          cardStyle: {backgroundColor: 'black'},
+          headerTintColor: 'grey',
+          headerStyle: {
+            backgroundColor: colors.green,
+          },
+        }}
+      />
+      <ProfileStack.Screen name="EditProfile" component={EditProfile} />
+    </ProfileStack.Navigator>
+  );
+};
 
 export default function TabsNav() {
   const theme = useTheme();
@@ -33,17 +58,17 @@ export default function TabsNav() {
       <Tabs.Screen
         name="Map"
         component={MapScreen}
-        listeners={({ navigation }) => {
+        listeners={({navigation}) => {
           return {
-            tabPress: (e) => {
+            tabPress: e => {
               e.preventDefault();
-              navigation.navigate("Map");
+              navigation.navigate('Map');
             },
           };
         }}
         options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon iconName={"map"} color={color} focused={focused} />
+          tabBarIcon: ({focused, color, size}) => (
+            <TabIcon iconName={'map'} color={color} focused={focused} />
           ),
         }}
       />
@@ -71,9 +96,9 @@ export default function TabsNav() {
       />
       <Tabs.Screen
         name="Profile"
-        component={EmptyScreen}
+        component={ProfileStackScreen}
         options={{
-          tabBarIcon: ({focused, color}) => (
+          tabBarIcon: ({focused, color, size}) => (
             <TabIcon iconName={'person'} color={color} focused={focused} />
           ),
         }}
