@@ -4,33 +4,10 @@ import EmptyScreen from '../screens/EmptyScreen';
 import TabIcon from '../components/nav/TabIcon';
 import {useTheme} from 'styled-components';
 import MapScreen from '../screens/MapScreen';
-import {createStackNavigator} from '@react-navigation/stack';
-import Profile from '../screens/Profile';
-import EditProfile from '../screens/EditProfile';
-import {colors} from '../colors';
+import {RootStackParamList} from '../shared/shared.types.ts';
+import ProfileStackNav from './ProfileStackNav.tsx';
 
-const Tabs = createBottomTabNavigator();
-const ProfileStack = createStackNavigator();
-
-const ProfileStackScreen: React.FC = () => {
-  return (
-    <ProfileStack.Navigator>
-      <ProfileStack.Screen
-        name="MyProfile"
-        component={Profile}
-        options={{
-          headerShown: true,
-          cardStyle: {backgroundColor: 'black'},
-          headerTintColor: 'grey',
-          headerStyle: {
-            backgroundColor: colors.green,
-          },
-        }}
-      />
-      <ProfileStack.Screen name="EditProfile" component={EditProfile} />
-    </ProfileStack.Navigator>
-  );
-};
+const Tabs = createBottomTabNavigator<RootStackParamList>();
 
 export default function TabsNav() {
   const theme = useTheme();
@@ -67,7 +44,7 @@ export default function TabsNav() {
           };
         }}
         options={{
-          tabBarIcon: ({focused, color, size}) => (
+          tabBarIcon: ({focused, color}) => (
             <TabIcon iconName={'map'} color={color} focused={focused} />
           ),
         }}
@@ -95,10 +72,10 @@ export default function TabsNav() {
         }}
       />
       <Tabs.Screen
-        name="Profile"
-        component={ProfileStackScreen}
+        name="ProfileStackScreen"
+        component={ProfileStackNav}
         options={{
-          tabBarIcon: ({focused, color, size}) => (
+          tabBarIcon: ({focused, color}) => (
             <TabIcon iconName={'person'} color={color} focused={focused} />
           ),
         }}

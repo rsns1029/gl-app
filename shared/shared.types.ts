@@ -1,7 +1,8 @@
 import {Location} from '../generated/graphql';
+import {EditProfileProps} from '../screens/EditProfile.tsx';
 
 export type RootStackParamList = {
-  StackMessagesNav: any;
+  Chats: any;
   TabNav: any;
   StackLogin: {username: string; password: string} | undefined;
   Welcome: any;
@@ -14,6 +15,11 @@ export type RootStackParamList = {
   StepTwo: any;
   StepThree: any;
   Rooms: any;
+  EditProfile: EditProfileProps;
+  ProfileStackScreen: undefined;
+  MyProfile: undefined;
+  Map: undefined;
+  Matches: undefined;
 };
 
 export interface User {
