@@ -8,6 +8,8 @@ import {SignUpAppContext} from './SignUpContext';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList, validSignUpPages} from '../../shared/shared.types';
 import {useValidCreateAccountLazyQuery} from '../../generated/graphql';
+import {GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 type StepOneProps = NativeStackScreenProps<RootStackParamList, 'StepOne'>;
 export default function StepOne({navigation}: StepOneProps) {
@@ -25,6 +27,12 @@ export default function StepOne({navigation}: StepOneProps) {
   ): void => {
     setFunction(value);
     setValidated(false);
+  };
+
+  const googleSigninConfigure = () => {
+    GoogleSignin.configure({
+      webClientId: '200851602419-5ebei1h581bd4d93ccpehak6pkuiobk3.apps.googleusercontent.com',
+    });
   };
 
   const [executeQuery, {loading}] = useValidCreateAccountLazyQuery({
@@ -83,6 +91,36 @@ export default function StepOne({navigation}: StepOneProps) {
     });
   };
 
+  async function onGoogleButtonPress() {
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const { idToken } = await GoogleSignin.signIn();
+      const userInfo = await GoogleSignin.signIn();
+      console.log("구글 토큰: ", idToken);
+
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      await auth().signInWithCredential(googleCredential);
+      console.log("Email: ", userInfo.user.email);
+      console.log("UserId: ", userInfo.user.id);
+      console.log("UserInfo: ", userInfo.user);
+      setUsername(userInfo.user.email);
+      setPassword(userInfo.user.id);
+      setRepassword(userInfo.user.id);
+      handleGoogleNext('StepTwo')
+    } catch (error) {
+      console.error("Google 로그인 실패:", error);
+      setErrorMsg("Fail")
+    }
+  }
+
+  const handleGoogleNext = async (nextPage: keyof RootStackParamList) => {
+    
+    setValidated(true);
+    await executeQuery({
+      variables: {username, nextPage},
+    });
+  };
+  
   const HeaderBar = () => (
     <StepBar
       currentStep={1}
@@ -91,6 +129,7 @@ export default function StepOne({navigation}: StepOneProps) {
   );
 
   useEffect(() => {
+    googleSigninConfigure();
     navigation.setOptions({
       headerTitle: HeaderBar,
     });
@@ -133,13 +172,20 @@ export default function StepOne({navigation}: StepOneProps) {
           <Text style={{color: 'red', marginBottom: 10}}>{errorMsg}</Text>
         )}
       </View>
-      <View style={{marginBottom: 150, width: '85%', alignSelf: 'center'}}>
+      <View style={{ width: '85%', alignSelf: 'center'}}>
         <AuthButton
           text="Next"
           disabled={false}
           loading={loading}
           onPress={async () => handleNext('StepTwo')}
         />
+      </View>
+      <View style={{marginBottom: 150, width: '85%', alignSelf: 'center'}}>
+      <GoogleSigninButton
+        onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}
+        size={GoogleSigninButton.Size.Wide}
+        color={GoogleSigninButton.Color.Dark}
+      />
       </View>
     </AuthLayout>
   );

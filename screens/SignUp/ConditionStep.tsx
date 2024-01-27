@@ -110,10 +110,11 @@ export default function ConditionStep({navigation}: ConditionStepProps) {
   } = useForm();
 
   const onValid = async () => {
-    if (!agree) {
-      setErrorMsg('Please, Agree the term');
-      return;
-    }
+       
+    // if (!agree) {
+    //   setErrorMsg('Please, Agree the term');
+    //   return;
+    // }
     if (!loading) {
       const {
         username,
@@ -126,7 +127,7 @@ export default function ConditionStep({navigation}: ConditionStepProps) {
         instaUsername,
         avatar,
       } = getValues();
-
+      console.log(username)
       await createAccountMutation({
         variables: {
           username,
