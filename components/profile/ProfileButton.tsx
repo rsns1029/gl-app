@@ -3,6 +3,8 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
 import styled from 'styled-components/native';
+import {RootStackParamList} from '../../shared/shared.types.ts';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 interface ProfileButtonProps {
   id: number;
@@ -63,13 +65,15 @@ const DownButton = styled.View`
   border-radius: 5px;
 `;
 
+type NavigationProp = StackNavigationProp<RootStackParamList>;
+
 const ProfileButton: React.FC<ProfileButtonProps> = ({
   id,
   name,
   accountName,
   profileImage,
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [follow, setFollow] = useState<boolean>(false);
 
   return (

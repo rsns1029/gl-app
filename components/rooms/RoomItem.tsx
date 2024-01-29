@@ -35,12 +35,12 @@ const UnreadDot = styled.View`
   background-color: ${colors.blue};
 `;
 const Username = styled.Text`
-  color: white;
+  color: ${props => props.theme.fontColor};
   font-weight: 600;
   font-size: 16px;
 `;
 const UnreadText = styled.Text`
-  color: white;
+  color: ${props => props.theme.fontColor};
   margin-top: 2px;
   font-weight: 500;
 `;

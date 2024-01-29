@@ -3,8 +3,9 @@ import TabsNav from './TabsNav';
 import MessagesNav from './MessagesNav';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTheme} from 'styled-components';
+import {RootStackParamList} from '../shared/shared.types.ts';
 
-const Nav = createStackNavigator();
+const Nav = createStackNavigator<RootStackParamList>();
 
 export default function LoggedInNav() {
   const theme = useTheme();

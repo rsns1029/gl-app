@@ -20,6 +20,7 @@ export type RootStackParamList = {
   MyProfile: undefined;
   Map: undefined;
   Matches: undefined;
+  StackMessagesNav: undefined;
 };
 
 export interface User {
@@ -52,9 +53,9 @@ export interface Photo {
   file: string;
 }
 
-export const validSignUpPages = (
-  page: string,
-): page is keyof RootStackParamList => {
-  const validNextPages = ['StepTwo', 'StepThree', 'StepFour', 'ConditionStep'];
-  return validNextPages.includes(page);
-};
+export type CreateAccountValidPage =
+  | 'StepOne'
+  | 'StepTwo'
+  | 'StepThree'
+  | 'StepFour'
+  | 'ConditionStep';

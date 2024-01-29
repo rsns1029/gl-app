@@ -18,7 +18,7 @@ type CreateAccountProps = NativeStackScreenProps<
   'CreateAccount'
 >;
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function CreateAccount({navigation}: CreateAccountProps) {
   const theme = useTheme();

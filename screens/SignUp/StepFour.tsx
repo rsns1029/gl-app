@@ -8,7 +8,10 @@ import {colors} from '../../colors';
 import StepBar from './StepBar';
 import {SignUpAppContext} from './SignUpContext';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../shared/shared.types';
+import {
+  CreateAccountValidPage,
+  RootStackParamList,
+} from '../../shared/shared.types';
 
 type StepFourProps = NativeStackScreenProps<RootStackParamList, 'StepFour'>;
 
@@ -72,7 +75,7 @@ export default function StepFour({navigation}: StepFourProps) {
   };
 
   const handleNext = (nextPage: keyof RootStackParamList) => {
-    navigation.navigate(nextPage);
+    navigation.navigate(nextPage as CreateAccountValidPage);
   };
 
   const HeaderBar = () => (

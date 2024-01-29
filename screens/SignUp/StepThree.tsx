@@ -7,9 +7,12 @@ import {format} from 'date-fns';
 import AuthLayout from '../../components/auth/AuthLayout';
 import AuthButton from '../../components/auth/AuthButton';
 import {SignUpAppContext} from './SignUpContext';
-import StepBar from './StepBar';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../shared/shared.types';
+import {
+  CreateAccountValidPage,
+  RootStackParamList,
+} from '../../shared/shared.types';
+import StepBar from './StepBar';
 
 type stepThreeProps = NativeStackScreenProps<RootStackParamList, 'StepThree'>;
 
@@ -37,7 +40,7 @@ export default function StepThree({navigation}: stepThreeProps) {
       setErrorMsg('Please, write your Birth Date');
       return false;
     }
-    navigation.navigate(nextPage);
+    navigation.navigate(nextPage as CreateAccountValidPage);
   };
 
   const HeaderBar = () => (

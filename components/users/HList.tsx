@@ -3,7 +3,7 @@ import {FlatList} from 'react-native';
 import styled from 'styled-components/native';
 import VUser from './VUser';
 
-interface HlistProps {
+interface HListProps {
   title: string;
   data: any;
   hLoadMore?: (() => void) | null;
@@ -25,7 +25,7 @@ const ListTitle = styled.Text`
   margin-bottom: 5px;
 `;
 
-export default function HList({title, data, hLoadMore}: HlistProps) {
+export default function HList({title, data, hLoadMore}: HListProps) {
   const renderItem = ({item: user}: {item: any}) => <VUser {...user} />;
 
   if (data.length === 0) {

@@ -7,6 +7,7 @@ import {MATCH_FRAGMENT, ROOM_FRAGMENT} from '../fragments';
 import styled from 'styled-components/native';
 import HList from '../components/users/HList';
 import {Room} from '../generated/graphql.ts';
+import {useTheme} from 'styled-components';
 
 const SEE_ROOMS_QUERY = gql`
   query seeRooms {
@@ -42,14 +43,14 @@ const SeparatorView = styled.View`
   width: 90%;
   height: 1px;
   align-self: center;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: ${props => props.theme.separatorLineColor};
 `;
 
 const BigSeparatorView = styled.View`
   width: 95%;
   height: 3px;
   align-self: center;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: ${props => props.theme.separatorLineColor};
 `;
 
 const EmptyListContainer = styled.View`
@@ -76,7 +77,7 @@ interface ChatDataProps {
 
 export default function Rooms() {
   const noDataImgSrc = require('../assets/noData.png');
-
+  const theme = useTheme();
   console.log('see room 1 : ');
 
   const {data: chatData, loading: chatLoading} = useQuery<ChatDataProps>(

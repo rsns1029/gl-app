@@ -21,20 +21,24 @@ export default function TabsNav() {
           borderTopColor: theme.fontColor,
         },
         tabBarActiveTintColor: theme.fontColor,
-        tabBarInactiveTintColor: 'grey',
+        tabBarInactiveTintColor: 'red',
       }}>
       <Tabs.Screen
         name="Matches"
         component={EmptyScreen}
         options={{
           tabBarIcon: ({focused, color}) => (
-            <TabIcon iconName={'heart'} color={color} focused={focused} />
+            <TabIcon
+              iconName={'heart'}
+              color={theme.fontColor}
+              focused={focused}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="Map"
-        component={MapScreen}
+        component={EmptyScreen}
         listeners={({navigation}) => {
           return {
             tabPress: e => {
@@ -45,7 +49,11 @@ export default function TabsNav() {
         }}
         options={{
           tabBarIcon: ({focused, color}) => (
-            <TabIcon iconName={'map'} color={color} focused={focused} />
+            <TabIcon
+              iconName={'map'}
+              color={theme.fontColor}
+              focused={focused}
+            />
           ),
         }}
       />
@@ -65,7 +73,7 @@ export default function TabsNav() {
           tabBarIcon: ({focused, color}) => (
             <TabIcon
               iconName={'chatbox-ellipses'}
-              color={color}
+              color={theme.fontColor}
               focused={focused}
             />
           ),
@@ -76,7 +84,11 @@ export default function TabsNav() {
         component={ProfileStackNav}
         options={{
           tabBarIcon: ({focused, color}) => (
-            <TabIcon iconName={'person'} color={color} focused={focused} />
+            <TabIcon
+              iconName={'person'}
+              color={theme.fontColor}
+              focused={focused}
+            />
           ),
         }}
       />

@@ -24,7 +24,6 @@
     "apollo-upload-client": "^17.0.0",
     "apollo3-cache-persist": "^0.14.1",
     "date-fns": "^3.2.0",
-    "expo-location": "^16.5.2",
     "graphql": "^15.8.0",
     "graphql-ws": "^5.14.3",
     "react": "^18.2.0",
