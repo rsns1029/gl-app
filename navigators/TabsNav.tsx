@@ -38,7 +38,7 @@ export default function TabsNav() {
       />
       <Tabs.Screen
         name="Map"
-        component={EmptyScreen}
+        component={MapScreen}
         listeners={({navigation}) => {
           return {
             tabPress: e => {
