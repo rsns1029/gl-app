@@ -50,9 +50,55 @@ export default function MapScreen() {
   const initialRegion: Region = {
     latitude: location ? location.latitude : 0,
     longitude: location ? location.longitude : 0,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
   };
+
+  const customMapStyle = [
+    {
+      "elementType": "geometry",
+      "stylers": [
+        {
+          "color": "#242f3e"
+        }
+      ]
+    },
+    {
+      "elementType": "labels.text.fill",
+      "stylers": [
+        {
+          "color": "#746855"
+        }
+      ]
+    },
+    {
+      "elementType": "labels.text.stroke",
+      "stylers": [
+        {
+          "color": "#242f3e"
+        }
+      ]
+    },
+    {
+      "featureType": "administrative.locality",
+      "elementType": "labels.text.fill",
+      "stylers": [
+        {
+          "color": "#d59563"
+        }
+      ]
+    },
+    // 도로 색상이 이상함
+    {
+      "featureType": "road",
+      "elementType": "geometry",
+      "stylers": [
+        {
+          "color": "#FFFFFF" // 도로 스타일 변경
+        }
+      ]
+    },
+  ];
 
   return (
     <View style={{ flex: 1 }}>
@@ -60,6 +106,7 @@ export default function MapScreen() {
         style={{ flex: 1 }}
         region={initialRegion}
         showsUserLocation={true}
+        customMapStyle={customMapStyle} // 임의로 스타일 적용
       >
         {location && (
           <Marker
