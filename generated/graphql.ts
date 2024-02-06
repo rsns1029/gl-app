@@ -379,6 +379,36 @@ export type SendMessageMutation = {
   };
 };
 
+export type SeeMeQueryVariables = Exact<{[key: string]: never}>;
+
+export type SeeMeQuery = {
+  __typename?: 'Query';
+  me?: {__typename?: 'User'; username: string; id: number} | null;
+};
+
+export type SeeProfileQueryVariables = Exact<{
+  seeProfileId: Scalars['Int']['input'];
+}>;
+
+export type SeeProfileQuery = {
+  __typename?: 'Query';
+  seeProfile?: {
+    __typename?: 'User';
+    id: number;
+    username: string;
+    followers?: Array<{
+      __typename?: 'User';
+      id: number;
+      username: string;
+    } | null> | null;
+    following?: Array<{
+      __typename?: 'User';
+      id: number;
+      username: string;
+    } | null> | null;
+  } | null;
+};
+
 export type SeeRoomQueryVariables = Exact<{
   id: Scalars['Int']['input'];
 }>;
@@ -670,6 +700,149 @@ export type SendMessageMutationResult =
 export type SendMessageMutationOptions = Apollo.BaseMutationOptions<
   SendMessageMutation,
   SendMessageMutationVariables
+>;
+export const SeeMeDocument = gql`
+  query SeeMe {
+    me {
+      username
+      id
+    }
+  }
+`;
+
+/**
+ * __useSeeMeQuery__
+ *
+ * To run a query within a React component, call `useSeeMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSeeMeQuery(
+  baseOptions?: Apollo.QueryHookOptions<SeeMeQuery, SeeMeQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<SeeMeQuery, SeeMeQueryVariables>(
+    SeeMeDocument,
+    options,
+  );
+}
+export function useSeeMeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SeeMeQuery, SeeMeQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<SeeMeQuery, SeeMeQueryVariables>(
+    SeeMeDocument,
+    options,
+  );
+}
+export function useSeeMeSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SeeMeQuery,
+    SeeMeQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<SeeMeQuery, SeeMeQueryVariables>(
+    SeeMeDocument,
+    options,
+  );
+}
+export type SeeMeQueryHookResult = ReturnType<typeof useSeeMeQuery>;
+export type SeeMeLazyQueryHookResult = ReturnType<typeof useSeeMeLazyQuery>;
+export type SeeMeSuspenseQueryHookResult = ReturnType<
+  typeof useSeeMeSuspenseQuery
+>;
+export type SeeMeQueryResult = Apollo.QueryResult<
+  SeeMeQuery,
+  SeeMeQueryVariables
+>;
+export const SeeProfileDocument = gql`
+  query SeeProfile($seeProfileId: Int!) {
+    seeProfile(id: $seeProfileId) {
+      id
+      username
+      followers {
+        id
+        username
+      }
+      following {
+        id
+        username
+      }
+    }
+  }
+`;
+
+/**
+ * __useSeeProfileQuery__
+ *
+ * To run a query within a React component, call `useSeeProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeProfileQuery({
+ *   variables: {
+ *      seeProfileId: // value for 'seeProfileId'
+ *   },
+ * });
+ */
+export function useSeeProfileQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SeeProfileQuery,
+    SeeProfileQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<SeeProfileQuery, SeeProfileQueryVariables>(
+    SeeProfileDocument,
+    options,
+  );
+}
+export function useSeeProfileLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SeeProfileQuery,
+    SeeProfileQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<SeeProfileQuery, SeeProfileQueryVariables>(
+    SeeProfileDocument,
+    options,
+  );
+}
+export function useSeeProfileSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SeeProfileQuery,
+    SeeProfileQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<SeeProfileQuery, SeeProfileQueryVariables>(
+    SeeProfileDocument,
+    options,
+  );
+}
+export type SeeProfileQueryHookResult = ReturnType<typeof useSeeProfileQuery>;
+export type SeeProfileLazyQueryHookResult = ReturnType<
+  typeof useSeeProfileLazyQuery
+>;
+export type SeeProfileSuspenseQueryHookResult = ReturnType<
+  typeof useSeeProfileSuspenseQuery
+>;
+export type SeeProfileQueryResult = Apollo.QueryResult<
+  SeeProfileQuery,
+  SeeProfileQueryVariables
 >;
 export const SeeRoomDocument = gql`
   query SeeRoom($id: Int!) {
