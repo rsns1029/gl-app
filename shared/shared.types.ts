@@ -20,6 +20,11 @@ export type RootStackParamList = {
   MyProfile: undefined;
   Map: undefined;
   Matches: undefined;
+  StackProfileNavigation: any;
+  StackFollowers: any;
+  StackFollowing: any;
+  StackProfile: any;
+  StackMessagesNav: any;
 };
 
 export interface User {

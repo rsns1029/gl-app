@@ -10,4 +10,7 @@ export const darkTheme: DefaultTheme = {
   bgColor: '#000',
   fontColor: 'white',
   placeHolderFontColor: 'rgba(255, 255, 255, 0.6)',
+  activeColor: '#0095F6',
+  bgContainerColor: '#3C3C3C',
+  borderColor: 'white',
 };

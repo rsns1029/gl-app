@@ -3,6 +3,7 @@ import TabsNav from './TabsNav';
 import MessagesNav from './MessagesNav';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTheme} from 'styled-components';
+import ProfileStackNav from './ProfileStackNav';
 
 const Nav = createStackNavigator();
 
@@ -25,6 +26,11 @@ export default function LoggedInNav() {
         name="StackMessagesNav"
         options={{headerShown: false}}
         component={MessagesNav}
+      />
+      <Nav.Screen
+        name="StackProfileNavigation"
+        options={{headerShown: false}}
+        component={ProfileStackNav}
       />
     </Nav.Navigator>
   );
