@@ -5,10 +5,9 @@ import React, {useEffect, useState} from 'react';
 import {RootStackParamList} from '../shared/shared.types';
 import {FlatList, useWindowDimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import useMe from '../hooks/useMe';
 import {useSeeProfileQuery} from '../generated/graphql';
-import {gql, useQuery} from '@apollo/client';
-import useLoggedInUser from '../hooks/useLoggedInUser';
+import useMe from '../hooks/useMe.tsx';
+
 // import {
 //   //useFollowUserMutation,
 //   useSeeProfileQuery,
@@ -163,25 +162,16 @@ const Profile = ({navigation, route}: ProfileNavigationProps) => {
   const {width} = useWindowDimensions();
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const {loading, error, data} = useSeeProfileQuery({
+  const {data: meData} = useMe();
+
+  const {data} = useSeeProfileQuery({
     variables: {
-      seeProfileId: 13, // 프로필 ID를 변수로 전달합니다.
+      seeProfileId: meData?.me.id, // 프로필 ID를 변수로 전달합니다.
     },
   });
 
-  if (loading) {
-  }
-
-  if (error) {
-    console.log(error.message);
-  }
-
   // data의 타입이 SeeProfileQuery에 맞게 정의됩니다.
   const userProfile = data?.seeProfile;
-
-  console.log(userProfile?.username);
-  console.log(userProfile?.followers?.length);
-  console.log(userProfile?.following?.length);
 
   const seeProfileLoading = true;
   // test
@@ -338,22 +328,18 @@ const Profile = ({navigation, route}: ProfileNavigationProps) => {
                   <CommonText>게시물</CommonText>
                 </PostContainer>
                 <FollowerContainer onPress={handleNavigateToFollowersScreen}>
-                  <CommonNumber>
-                    {seeProfileData?.seeProfile.user?.totalFollowers ?? 0}
-                  </CommonNumber>
+                  <CommonNumber>{meData?.me.followersCount ?? 0}</CommonNumber>
                   <CommonText>팔로워</CommonText>
                 </FollowerContainer>
                 <FollowingContainer onPress={handleNavigateToFollowingScreen}>
-                  <CommonNumber>
-                    {seeProfileData?.seeProfile.user?.totalFollowing ?? 0}
-                  </CommonNumber>
+                  <CommonNumber>{meData?.me.followingCount ?? 0}</CommonNumber>
                   <CommonText>팔로잉</CommonText>
                 </FollowingContainer>
               </UserInfoContainer>
             </UserContainer>
             <UserActionContainer>
-              <Username>{seeProfileData?.seeProfile.user?.username}</Username>
-              <Bio>{seeProfileData?.seeProfile.user?.bio}</Bio>
+              {/*<Username>{meData?.me.username}</Username>*/}
+              {/*<Bio>{seeProfileData?.seeProfile.user?.bio}</Bio>*/}
               <Buttons>
                 {/*{route.params?.isMe === true ? (*/}
                 {isMe === true ? (
