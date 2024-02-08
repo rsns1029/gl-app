@@ -7,6 +7,9 @@ import {RootStackParamList} from '../shared/shared.types';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Profile from '../screens/Profile';
+import Followers from '../screens/Followers.tsx';
+import Following from '../screens/Following.tsx';
+import EditProfile from '../screens/EditProfile';
 
 type ProfileNavigationProps = NativeStackScreenProps<
   RootStackParamList,
@@ -18,10 +21,6 @@ const Stack = createStackNavigator();
 const ProfileStackNav = ({navigation, route}: ProfileNavigationProps) => {
   const isDarkMode: 'light' | 'dark' = useReactiveVar(colorModeVar);
 
-  useEffect(() => {
-    navigation.setOptions({headerShown: false});
-  }, []);
-
   return (
     <Stack.Navigator
       screenOptions={{
@@ -31,21 +30,22 @@ const ProfileStackNav = ({navigation, route}: ProfileNavigationProps) => {
         },
         headerTintColor: isDarkMode === 'light' ? 'black' : 'white',
       }}>
+      <Stack.Screen name="StackProfile" component={Profile} />
       <Stack.Screen
-        name="StackProfile"
-        component={Profile}
-        initialParams={route.params}
+        name="StackFollowers"
+        component={Followers}
+        options={{headerTitle: '팔로워'}}
       />
-      {/*<Stack.Screen*/}
-      {/*  name="StackFollowers"*/}
-      {/*  component={Followers}*/}
-      {/*  options={{headerTitle: '팔로워'}}*/}
-      {/*/>*/}
-      {/*<Stack.Screen*/}
-      {/*  name="StackFollowing"*/}
-      {/*  component={Following}*/}
-      {/*  options={{headerTitle: '팔로잉'}}*/}
-      {/*/>*/}
+      <Stack.Screen
+        name="StackFollowing"
+        component={Following}
+        options={{headerTitle: '팔로잉'}}
+      />
+      <Stack.Screen
+        name="StackEditProfile"
+        component={EditProfile}
+        options={{headerTitle: '프로필 수정'}}
+      />
     </Stack.Navigator>
   );
 };

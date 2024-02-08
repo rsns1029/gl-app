@@ -158,11 +158,17 @@ const AvatarText = styled.Text`
   margin-top: 15px;
 `;
 
-const Profile = ({navigation, route}: ProfileNavigationProps) => {
+const Profile = ({navigation}: ProfileNavigationProps) => {
   const {width} = useWindowDimensions();
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const {data: meData} = useMe();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: meData?.me.username, // 변경할 헤더 타이틀
+    });
+  }, []);
 
   const {data} = useSeeProfileQuery({
     variables: {
@@ -176,11 +182,27 @@ const Profile = ({navigation, route}: ProfileNavigationProps) => {
   const seeProfileLoading = true;
   // test
   const seeProfileData = null;
-  const handleNavigateToFollowersScreen = null;
-  const handleNavigateToFollowingScreen = null;
   const handleNavigateToStackRoomsNavigation = null;
   const isMe = true;
-  const handleNavigateToPhotoScreen = null;
+  const handleNavigateToFollowersScreen = (): void => {
+    navigation.navigate('StackFollowers', {
+      username: userProfile?.username,
+      followers: userProfile?.followers,
+    });
+  };
+  const handleNavigateToFollowingScreen = (): void => {
+    navigation.navigate('StackFollowing', {
+      username: userProfile?.username,
+      following: userProfile?.following,
+    });
+  };
+
+  const handleNavigateToEditProfileScreen = (): void => {
+    navigation.navigate('StackEditProfile', {
+      username: userProfile?.username,
+      following: userProfile?.following,
+    });
+  };
   // const {
   //   data: seeProfileData,
   //   loading: seeProfileLoading,
@@ -293,14 +315,6 @@ const Profile = ({navigation, route}: ProfileNavigationProps) => {
     );
   };
 
-  useEffect(() => {
-    if (route.params && route.params.name && route.params.username) {
-      navigation.setOptions({
-        headerTitle: `${route.params?.name}(@${route.params?.username})`,
-      });
-    }
-  }, []);
-
   return (
     <Container>
       {!seeProfileLoading ? (
@@ -310,15 +324,12 @@ const Profile = ({navigation, route}: ProfileNavigationProps) => {
           <TopContainer>
             <UserContainer>
               <AvatarContainer>
-                <Avatar source={require('../assets/basic_user.jpeg')} />
+                {meData?.me.avatar ? (
+                  <Avatar source={{uri: meData.me.avatar}} />
+                ) : (
+                  <Avatar source={require('../assets/basic_user.jpeg')} />
+                )}
                 <AvatarText>{userProfile?.username}</AvatarText>
-                {/*{seeProfileData?.seeProfile.user?.avatarUrl ? (*/}
-                {/*  <Avatar*/}
-                {/*    source={{uri: seeProfileData?.seeProfile.user?.avatarUrl}}*/}
-                {/*  />*/}
-                {/*) : (*/}
-                {/*  <Avatar source={require('../assets/basic_user.jpeg')} />*/}
-                {/*)}*/}
               </AvatarContainer>
               <UserInfoContainer width={width}>
                 <PostContainer>
@@ -343,7 +354,7 @@ const Profile = ({navigation, route}: ProfileNavigationProps) => {
               <Buttons>
                 {/*{route.params?.isMe === true ? (*/}
                 {isMe === true ? (
-                  <LeftActionButton>
+                  <LeftActionButton onPress={handleNavigateToEditProfileScreen}>
                     <LeftActionButtonText>프로필 수정</LeftActionButtonText>
                   </LeftActionButton>
                 ) : (

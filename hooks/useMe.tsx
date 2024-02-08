@@ -9,6 +9,7 @@ const ME_QUERY = gql`
       username
       followingCount
       followersCount
+      avatar
     }
   }
 `;

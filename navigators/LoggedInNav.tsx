@@ -4,11 +4,13 @@ import MessagesNav from './MessagesNav';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTheme} from 'styled-components';
 import ProfileStackNav from './ProfileStackNav';
+import useMe from '../hooks/useMe';
 
 const Nav = createStackNavigator();
 
 export default function LoggedInNav() {
   const theme = useTheme();
+  const {data: meData} = useMe();
 
   return (
     <Nav.Navigator

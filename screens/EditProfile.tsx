@@ -7,7 +7,6 @@ import {RootStackParamList} from '../shared/shared.types.ts';
 const Container = styled.SafeAreaView`
   flex: 1;
   width: 100%;
-  background-color: white;
 `;
 
 const Header = styled.View`
@@ -23,6 +22,7 @@ const CancelButton = styled.TouchableOpacity``;
 const Title = styled.Text`
   font-size: 16px;
   font-weight: bold;
+  color: white;
 `;
 
 const CompleteButton = styled.TouchableOpacity``;
@@ -50,6 +50,7 @@ const InputContainer = styled.View`
 
 const InputLabel = styled.Text`
   opacity: 0.5;
+  color: white;
 `;
 
 const TextInputStyled = styled.TextInput`
@@ -89,7 +90,6 @@ const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {
         <CancelButton onPress={() => navigation.goBack()}>
           <Text>취소</Text>
         </CancelButton>
-        <Title>프로필 수정</Title>
         <CompleteButton onPress={() => navigation.goBack()}>
           <Text style={{color: '#3493D9'}}>완료</Text>
         </CompleteButton>
