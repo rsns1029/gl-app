@@ -66,14 +66,14 @@ const CheckBox = styled.View`
   width: 28px;
   height: 28px;
   border-width: 1px;
-  border-color: white;
+  border-color: ${props => props.theme.fontColor};
   justify-content: center;
   align-items: center;
   margin-right: 10px;
 `;
 
 const CheckBoxIcon = styled(Icon)`
-  color: white;
+  color: ${props => props.theme.fontColor};
   font-size: 20px;
 `;
 

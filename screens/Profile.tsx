@@ -62,18 +62,6 @@ const Profile = () => {
           followers="300"
           following="35"
           post="458"
-          style={{
-            imageStyle: {
-              width: 135,
-              height: 80,
-              borderRadius: 100,
-            },
-            nameStyle: {
-              fontWeight: 'bold',
-              fontSize: 16,
-              color: 'white',
-            },
-          }}
         />
         <ProfileButton
           id={0}

@@ -3,7 +3,7 @@ import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import AvatarImg from './AvatarImg.tsx';
 
-interface vuserProps {
+interface VUserProps {
   avatar: string;
   username: string;
 }
@@ -19,7 +19,7 @@ const UserName = styled.Text`
   margin-bottom: 5px;
 `;
 
-export default function VUser({avatar, username}: vuserProps) {
+export default function VUser({avatar, username}: VUserProps) {
   return (
     <TouchableOpacity
       onPress={() => console.log('logs here for rendering profile image')}>

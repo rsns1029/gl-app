@@ -6,12 +6,16 @@ import {TextInput} from '../../components/auth/AuthShared';
 import StepBar from './StepBar';
 import {SignUpAppContext} from './SignUpContext';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList, validSignUpPages} from '../../shared/shared.types';
+import {
+  CreateAccountValidPage,
+  RootStackParamList,
+} from '../../shared/shared.types';
 import {useValidCreateAccountLazyQuery} from '../../generated/graphql';
 import {GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 
 type StepOneProps = NativeStackScreenProps<RootStackParamList, 'StepOne'>;
+
 export default function StepOne({navigation}: StepOneProps) {
   const {username, setUsername} = useContext(SignUpAppContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,11 +46,10 @@ export default function StepOne({navigation}: StepOneProps) {
         setReservedUsername(username);
         setValidated(true);
         setErrorMsg('');
-        if (
-          data.validCreateAccount.nextPage &&
-          validSignUpPages(data.validCreateAccount.nextPage)
-        ) {
-          navigation.navigate(data.validCreateAccount.nextPage);
+        if (data.validCreateAccount.nextPage) {
+          navigation.navigate(
+            data.validCreateAccount.nextPage as CreateAccountValidPage,
+          );
         }
       } else {
         setErrorMsg('Username already exists');
@@ -62,7 +65,7 @@ export default function StepOne({navigation}: StepOneProps) {
 
   const handleNext = async (nextPage: keyof RootStackParamList) => {
     if (validated) {
-      navigation.navigate(nextPage);
+      navigation.navigate(nextPage as CreateAccountValidPage);
       return true;
     }
 

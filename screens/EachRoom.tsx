@@ -25,6 +25,7 @@ import {
   useSendMessageMutation,
 } from '../generated/graphql';
 import {ROOM_UPDATES} from '../documents/subscriptions/roomUpdates.subscription';
+import {useTheme} from 'styled-components';
 
 type RoomProps = NativeStackScreenProps<RootStackParamList, 'EachRoom'>;
 
@@ -69,8 +70,8 @@ const IconContainer = styled.View`
 `;
 
 const MessageItem = styled.Text`
-  color: white;
-  background-color: rgba(255, 255, 255, 0.3);
+  color: ${props => props.theme.fontColor};
+  background-color: ${props => props.theme.separatorLineColor};
   padding: 5px 10px;
   overflow: hidden;
   border-radius: 10px;
@@ -81,7 +82,7 @@ const MessageItem = styled.Text`
 const TextInput = styled.TextInput`
   border: 1px solid ${colors.green};
   padding: 10px 20px;
-  color: white;
+  color: ${props => props.theme.fontColor};
   border-radius: 1000px;
   width: 90%;
   margin-right: 10px;
@@ -98,6 +99,7 @@ const InputContainer = styled.View`
 const SendButton = styled.TouchableOpacity``;
 
 export default function EachRoom({route, navigation}: RoomProps) {
+  const theme = useTheme();
   const {data: meData} = useMe();
   const {register, setValue, handleSubmit, getValues, watch} = useForm();
 
@@ -231,7 +233,7 @@ export default function EachRoom({route, navigation}: RoomProps) {
           id: route?.params?.id,
         },
         updateQuery: (prevQuery: SeeRoomQuery, options: any): any => {
-          console.log('updateQueory');
+          console.log('updateQuery');
 
           const {
             subscriptionData: {
@@ -313,9 +315,13 @@ export default function EachRoom({route, navigation}: RoomProps) {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView
-        style={{flex: 1, backgroundColor: 'black'}}
+        style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={64} // Adjust this value as much as header
+        keyboardVerticalOffset={55} // Adjust this value as much as header
         enabled>
         <ScreenLayout loading={loading}>
           <FlatList

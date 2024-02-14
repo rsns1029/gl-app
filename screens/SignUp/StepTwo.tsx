@@ -6,7 +6,10 @@ import styled, {css} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import StepBar from './StepBar';
 import {colors} from '../../colors';
-import {RootStackParamList} from '../../shared/shared.types';
+import {
+  CreateAccountValidPage,
+  RootStackParamList,
+} from '../../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 type stepTwoProps = NativeStackScreenProps<RootStackParamList, 'StepTwo'>;
@@ -94,19 +97,18 @@ export default function StepTwo({navigation}: stepTwoProps) {
   const [selectedGender, setSelectedGender] = useState(sex);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleGenderSelection = (g: string) => {
+  const handleGenderSelection = (g: 'M' | 'F') => {
     setSelectedGender(g);
     setSex(g);
     setErrorMsg('');
   };
 
   const handleNext = (nextPage: keyof RootStackParamList) => {
-    console.log(sex);
-    if (sex == null || sex == '') {
+    if (sex == null) {
       setErrorMsg('Please, select the gender');
       return false;
     }
-    navigation.navigate(nextPage);
+    navigation.navigate(nextPage as CreateAccountValidPage);
   };
 
   const HeaderBar = () => (

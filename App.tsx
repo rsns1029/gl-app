@@ -16,6 +16,7 @@ function App(): React.JSX.Element | null {
 
   const preload = async (): Promise<boolean> => {
     const token = await AsyncStorage.getItem('token');
+    // await AsyncStorage.removeItem('token');
     if (token) {
       tokenVar(token);
       return true;

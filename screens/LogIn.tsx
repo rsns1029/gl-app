@@ -73,6 +73,7 @@ const Login: FC<LoginProps> = ({ route: { params } }) => {
   };
 
   const onValid = (data: any) => {
+    setErrorMsg('');
     if (!loading) {
       logInMutation({
         variables: {
