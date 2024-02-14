@@ -59,7 +59,7 @@ export default function StepOne({navigation}: StepOneProps) {
     },
     onError: error => {
       console.log(error);
-      setErrorMsg('Network issue');
+      //setErrorMsg('Network issue');
     },
   });
 
@@ -94,14 +94,29 @@ export default function StepOne({navigation}: StepOneProps) {
     });
   };
 
+  useEffect(() => {
+    if (username && password && repassword) {
+      handleGoogleNext('StepTwo');
+      setValidated(true);
+    }
+  }, [username, password, repassword]);
+
+  const handleGoogleNext = async (nextPage: keyof RootStackParamList) => {
+    console.log("Email: ", username);
+    setValidated(true);
+    await executeQuery({
+      variables: {username, nextPage},
+    });
+  };
+
   async function onGoogleButtonPress() {
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const { idToken } = await GoogleSignin.signIn();
+      //const { idToken } = await GoogleSignin.signIn();
       const userInfo = await GoogleSignin.signIn();
-      console.log("구글 토큰: ", idToken);
+      //console.log("구글 토큰: ", idToken);
 
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const googleCredential = auth.GoogleAuthProvider.credential(userInfo.idToken);
       await auth().signInWithCredential(googleCredential);
       console.log("Email: ", userInfo.user.email);
       console.log("UserId: ", userInfo.user.id);
@@ -109,20 +124,13 @@ export default function StepOne({navigation}: StepOneProps) {
       setUsername(userInfo.user.email);
       setPassword(userInfo.user.id);
       setRepassword(userInfo.user.id);
-      handleGoogleNext('StepTwo')
+      setValidated(true);
+      await handleGoogleNext('StepTwo')
     } catch (error) {
       console.error("Google 로그인 실패:", error);
       setErrorMsg("Fail")
     }
   }
-
-  const handleGoogleNext = async (nextPage: keyof RootStackParamList) => {
-    
-    setValidated(true);
-    await executeQuery({
-      variables: {username, nextPage},
-    });
-  };
   
   const HeaderBar = () => (
     <StepBar
@@ -151,6 +159,7 @@ export default function StepOne({navigation}: StepOneProps) {
           onSubmitEditing={() => setActiveInput('password')}
           placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
           onChangeText={text => handleInputChange(setUsername, text)}
+          value={username} 
           autoFocus={activeInput === 'username'}
         />
         <TextInput
@@ -159,6 +168,7 @@ export default function StepOne({navigation}: StepOneProps) {
           onSubmitEditing={() => setActiveInput('repassword')}
           placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
           onChangeText={text => handleInputChange(setPassword, text)}
+          value={password} 
           secureTextEntry
           autoFocus={activeInput === 'password'}
         />
@@ -167,6 +177,7 @@ export default function StepOne({navigation}: StepOneProps) {
           returnKeyType="done"
           placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
           onChangeText={text => handleInputChange(setRepassword, text)}
+          value={repassword}
           lastOne={true}
           secureTextEntry
           autoFocus={activeInput === 'repassword'}

@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useEffect, useRef, FC } from "react";
+import React, { useEffect, useRef, FC, useState } from "react";
 import { Button } from "react-native";
 import AuthLayout from "../components/auth/AuthLayout";
 import { TextInput } from "../components/auth/AuthShared";
@@ -9,6 +9,7 @@ import { logUserIn } from "../apollo";
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import ErrorMessage from '../components/text/ErrorMessage';
 
 const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -39,19 +40,18 @@ const Login: FC<LoginProps> = ({ route: { params } }) => {
   async function onGoogleButtonPress() {
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const { idToken } = await GoogleSignin.signIn();
       const userInfo = await GoogleSignin.signIn();
-      console.log("구글 토큰: ", idToken);
 
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const googleCredential = auth.GoogleAuthProvider.credential(userInfo.idToken);
       await auth().signInWithCredential(googleCredential);
       setValue('username', userInfo.user.email);
       setValue('password', userInfo.user.id);
-      handleSubmit(onValid)
+      handleSubmit(onValid)()
     } catch (error) {
       console.error("Google 로그인 실패:", error);
     }
   }
+  const [errorMsg, setErrorMsg] = useState('');
 
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
@@ -64,6 +64,7 @@ const Login: FC<LoginProps> = ({ route: { params } }) => {
     const {
       login: { ok, token, error },
     } = data;
+    
     console.log("ok : ", ok);
     console.log("token : ", token);
     console.log("error : ", error);
