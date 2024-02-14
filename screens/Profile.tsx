@@ -7,6 +7,7 @@ import {FlatList, useWindowDimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useSeeProfileQuery} from '../generated/graphql';
 import useMe from '../hooks/useMe.tsx';
+import {useQuery, gql} from '@apollo/client';
 
 // import {
 //   //useFollowUserMutation,
@@ -177,8 +178,6 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
   });
 
   // data의 타입이 SeeProfileQuery에 맞게 정의됩니다.
-  const userProfile = data?.seeProfile;
-
   const seeProfileLoading = true;
   // test
   const seeProfileData = null;
@@ -186,21 +185,21 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
   const isMe = true;
   const handleNavigateToFollowersScreen = (): void => {
     navigation.navigate('StackFollowers', {
-      username: userProfile?.username,
-      followers: userProfile?.followers,
+      username: data?.seeProfile.username,
+      followers: data.seeProfile.followers,
     });
   };
   const handleNavigateToFollowingScreen = (): void => {
     navigation.navigate('StackFollowing', {
-      username: userProfile?.username,
-      following: userProfile?.following,
+      username: data?.seeProfile.username,
+      followers: data.seeProfile.following,
     });
   };
 
   const handleNavigateToEditProfileScreen = (): void => {
     navigation.navigate('StackEditProfile', {
-      username: userProfile?.username,
-      following: userProfile?.following,
+      username: data?.seeProfile.username,
+      following: data?.seeProfile?.following,
     });
   };
   // const {
@@ -329,7 +328,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                 ) : (
                   <Avatar source={require('../assets/basic_user.jpeg')} />
                 )}
-                <AvatarText>{userProfile?.username}</AvatarText>
+                <AvatarText>{data?.seeProfile?.username}</AvatarText>
               </AvatarContainer>
               <UserInfoContainer width={width}>
                 <PostContainer>

@@ -79,7 +79,7 @@ export type Mutation = {
   readMessage: MutationResponse;
   sendMessage: MutationResponse;
   unfollowUser: MutationResponse;
-  updateLocation?: Maybe<MutationResponse>;
+  updateLocation: MutationResponse;
   uploadPhoto?: Maybe<Photo>;
 };
 
@@ -281,7 +281,6 @@ export type Subscription = {
 export type SubscriptionMapUpdatesArgs = {
   generalLat: Scalars['Float']['input'];
   generalLon: Scalars['Float']['input'];
-  userId: Scalars['Int']['input'];
 };
 
 
@@ -388,10 +387,12 @@ export type SendMessageMutationVariables = Exact<{
 
 export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'MutationResponse', ok: boolean, id?: number | null } };
 
-export type SeeMeQueryVariables = Exact<{ [key: string]: never; }>;
+export type SeeFollowersQueryVariables = Exact<{
+  page: Scalars['Int']['input'];
+}>;
 
 
-export type SeeMeQuery = { __typename?: 'Query', me?: { __typename?: 'User', username: string, id: number, followersCount: number, followingCount: number } | null };
+export type SeeFollowersQuery = { __typename?: 'Query', seeFollowers: { __typename?: 'seeFollowersResult', error?: string | null, ok: boolean, totalPages?: number | null, followers?: Array<{ __typename?: 'User', id: number, username: string } | null> | null } };
 
 export type SeeProfileQueryVariables = Exact<{
   seeProfileId: Scalars['Int']['input'];
@@ -581,48 +582,52 @@ export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
 export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
 export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
-export const SeeMeDocument = gql`
-    query SeeMe {
-  me {
-    username
-    id
-    followersCount
-    followingCount
+export const SeeFollowersDocument = gql`
+    query SeeFollowers($page: Int!) {
+  seeFollowers(page: $page) {
+    error
+    followers {
+      id
+      username
+    }
+    ok
+    totalPages
   }
 }
     `;
 
 /**
- * __useSeeMeQuery__
+ * __useSeeFollowersQuery__
  *
- * To run a query within a React component, call `useSeeMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useSeeMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSeeFollowersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeFollowersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSeeMeQuery({
+ * const { data, loading, error } = useSeeFollowersQuery({
  *   variables: {
+ *      page: // value for 'page'
  *   },
  * });
  */
-export function useSeeMeQuery(baseOptions?: Apollo.QueryHookOptions<SeeMeQuery, SeeMeQueryVariables>) {
+export function useSeeFollowersQuery(baseOptions: Apollo.QueryHookOptions<SeeFollowersQuery, SeeFollowersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SeeMeQuery, SeeMeQueryVariables>(SeeMeDocument, options);
+        return Apollo.useQuery<SeeFollowersQuery, SeeFollowersQueryVariables>(SeeFollowersDocument, options);
       }
-export function useSeeMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeMeQuery, SeeMeQueryVariables>) {
+export function useSeeFollowersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeFollowersQuery, SeeFollowersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SeeMeQuery, SeeMeQueryVariables>(SeeMeDocument, options);
+          return Apollo.useLazyQuery<SeeFollowersQuery, SeeFollowersQueryVariables>(SeeFollowersDocument, options);
         }
-export function useSeeMeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SeeMeQuery, SeeMeQueryVariables>) {
+export function useSeeFollowersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SeeFollowersQuery, SeeFollowersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<SeeMeQuery, SeeMeQueryVariables>(SeeMeDocument, options);
+          return Apollo.useSuspenseQuery<SeeFollowersQuery, SeeFollowersQueryVariables>(SeeFollowersDocument, options);
         }
-export type SeeMeQueryHookResult = ReturnType<typeof useSeeMeQuery>;
-export type SeeMeLazyQueryHookResult = ReturnType<typeof useSeeMeLazyQuery>;
-export type SeeMeSuspenseQueryHookResult = ReturnType<typeof useSeeMeSuspenseQuery>;
-export type SeeMeQueryResult = Apollo.QueryResult<SeeMeQuery, SeeMeQueryVariables>;
+export type SeeFollowersQueryHookResult = ReturnType<typeof useSeeFollowersQuery>;
+export type SeeFollowersLazyQueryHookResult = ReturnType<typeof useSeeFollowersLazyQuery>;
+export type SeeFollowersSuspenseQueryHookResult = ReturnType<typeof useSeeFollowersSuspenseQuery>;
+export type SeeFollowersQueryResult = Apollo.QueryResult<SeeFollowersQuery, SeeFollowersQueryVariables>;
 export const SeeProfileDocument = gql`
     query SeeProfile($seeProfileId: Int!) {
   seeProfile(id: $seeProfileId) {
