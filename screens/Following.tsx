@@ -2,7 +2,11 @@ import styled from 'styled-components/native';
 import UserItem from '../components/UserItem';
 import {useState} from 'react';
 import {FlatList} from 'react-native';
-import {useSeeProfileQuery} from '../generated/graphql';
+import {
+  useSeeFollowersQuery,
+  useSeeFollowingQuery,
+  useSeeProfileQuery,
+} from '../generated/graphql';
 import {RootStackParamList} from '../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import useMe from '../hooks/useMe.tsx';
@@ -21,23 +25,33 @@ const FlatListContainer = styled(FlatList)`
   width: 100%;
 `;
 
+const Username = styled.Text`
+  font-weight: bold;
+  color: white;
+  font-size: 15px;
+  margin-bottom: 5px;
+`;
+
 const Followering = ({route}: FolloweringProps) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const {data: meData} = useMe();
 
-  const {refetch} = useSeeProfileQuery({
+  const {data} = useSeeFollowingQuery({
     variables: {
-      seeProfileId: meData?.me.id, // 프로필 ID를 변수로 전달합니다.
+      page: 1,
     },
   });
+
+  console.log(data?.seeFollowing.ok);
+
   const onRefresh = async (): Promise<void> => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   };
 
-  const renderItem = ({item: following}: any) => {
-    return <UserItem {...following} />;
+  const renderItem = ({item}: {item: any}) => {
+    return <Username>{item.username}</Username>;
   };
 
   return (
@@ -46,7 +60,7 @@ const Followering = ({route}: FolloweringProps) => {
         showsVerticalScrollIndicator={false}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        data={route.params?.following}
+        data={data?.seeFollowing?.following}
         renderItem={renderItem}
         keyExtractor={(following: any) => String(following.id)}
       />

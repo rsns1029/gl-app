@@ -387,6 +387,13 @@ export type SendMessageMutationVariables = Exact<{
 
 export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'MutationResponse', ok: boolean, id?: number | null } };
 
+export type SeeFollowingQueryVariables = Exact<{
+  page: Scalars['Int']['input'];
+}>;
+
+
+export type SeeFollowingQuery = { __typename?: 'Query', seeFollowing: { __typename?: 'seeFollowingResult', error?: string | null, ok: boolean, totalPages?: number | null, following?: Array<{ __typename?: 'User', id: number, username: string } | null> | null } };
+
 export type SeeFollowersQueryVariables = Exact<{
   page: Scalars['Int']['input'];
 }>;
@@ -582,6 +589,52 @@ export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
 export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
 export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
+export const SeeFollowingDocument = gql`
+    query SeeFollowing($page: Int!) {
+  seeFollowing(page: $page) {
+    error
+    following {
+      id
+      username
+    }
+    ok
+    totalPages
+  }
+}
+    `;
+
+/**
+ * __useSeeFollowingQuery__
+ *
+ * To run a query within a React component, call `useSeeFollowingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeFollowingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeFollowingQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useSeeFollowingQuery(baseOptions: Apollo.QueryHookOptions<SeeFollowingQuery, SeeFollowingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SeeFollowingQuery, SeeFollowingQueryVariables>(SeeFollowingDocument, options);
+      }
+export function useSeeFollowingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeFollowingQuery, SeeFollowingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SeeFollowingQuery, SeeFollowingQueryVariables>(SeeFollowingDocument, options);
+        }
+export function useSeeFollowingSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SeeFollowingQuery, SeeFollowingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SeeFollowingQuery, SeeFollowingQueryVariables>(SeeFollowingDocument, options);
+        }
+export type SeeFollowingQueryHookResult = ReturnType<typeof useSeeFollowingQuery>;
+export type SeeFollowingLazyQueryHookResult = ReturnType<typeof useSeeFollowingLazyQuery>;
+export type SeeFollowingSuspenseQueryHookResult = ReturnType<typeof useSeeFollowingSuspenseQuery>;
+export type SeeFollowingQueryResult = Apollo.QueryResult<SeeFollowingQuery, SeeFollowingQueryVariables>;
 export const SeeFollowersDocument = gql`
     query SeeFollowers($page: Int!) {
   seeFollowers(page: $page) {
