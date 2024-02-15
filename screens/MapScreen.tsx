@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
-import MapView, {Marker, Region} from 'react-native-maps';
+import {View} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import {PermissionsAndroid} from 'react-native';
-import {customMapStyle} from '../styles/mapStyle.ts';
 import RealTimeMap from '../components/map/RealTimeMap.tsx';
 
 interface LocationCoords {
@@ -13,6 +11,8 @@ interface LocationCoords {
 
 export default function MapScreen() {
   const [location, setLocation] = useState<LocationCoords | null>(null);
+  const [locationPermissionGranted, setLocationPermissionGranted] =
+    useState(false);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -28,8 +28,10 @@ export default function MapScreen() {
           granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
             PermissionsAndroid.RESULTS.GRANTED
         ) {
+          setLocationPermissionGranted(true);
           Geolocation.getCurrentPosition(
             position => {
+              console.log('Getting data');
               setLocation({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
@@ -38,7 +40,6 @@ export default function MapScreen() {
             error => {
               console.error('Error getting location:', error);
             },
-            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
           );
         } else {
           console.warn('Location permission denied');
