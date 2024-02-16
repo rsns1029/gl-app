@@ -1,24 +1,14 @@
-// import Followers from '../screens/Followers';
-// import Following from '../screens/Following';
-import {useEffect} from 'react';
 import {colorModeVar} from '../apollo';
 import {useReactiveVar} from '@apollo/client';
-import {RootStackParamList} from '../shared/shared.types';
 import {createStackNavigator} from '@react-navigation/stack';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Profile from '../screens/Profile';
 import Followers from '../screens/Followers.tsx';
 import Following from '../screens/Following.tsx';
 import EditProfile from '../screens/EditProfile';
 
-type ProfileNavigationProps = NativeStackScreenProps<
-  RootStackParamList,
-  'StackProfileNavigation'
->;
-
 const Stack = createStackNavigator();
 
-const ProfileStackNav = ({navigation, route}: ProfileNavigationProps) => {
+const ProfileStackNav = () => {
   const isDarkMode: 'light' | 'dark' = useReactiveVar(colorModeVar);
 
   return (

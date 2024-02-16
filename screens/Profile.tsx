@@ -272,22 +272,6 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
   //   }
   // };
 
-  // const handleNavigateToFollowersScreen = (): void => {
-  //   navigation.navigate('StackFollowers', {
-  //     name: seeProfileData?.seeProfile.user?.name,
-  //     username: seeProfileData?.seeProfile.user?.username,
-  //     followers: seeProfileData?.seeProfile.user?.followers,
-  //   });
-  // };
-  //
-  // const handleNavigateToFollowingScreen = (): void => {
-  //   navigation.navigate('StackFollowing', {
-  //     name: seeProfileData?.seeProfile.user?.name,
-  //     username: seeProfileData?.seeProfile.user?.username,
-  //     following: seeProfileData?.seeProfile.user?.following,
-  //   });
-  // };
-
   // const handleNavigateToStackRoomsNavigation = (): void => {
   //   navigation.navigate('StackRoomsNavigation');
   // };

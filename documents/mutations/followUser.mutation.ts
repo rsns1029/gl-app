@@ -1,15 +1,11 @@
-// import gql from 'graphql-tag';
-//
-// gql`
-//   mutation FollowUser($username: String!) {
-//     followUser(username: $username) {
-//       ok
-//       message
-//       user {
-//         id
-//         name
-//         username
-//       }
-//     }
-//   }
-// `;
+import gql from 'graphql-tag';
+
+gql`
+  mutation FollowUser($followUserId: Int!) {
+    followUser(id: $followUserId) {
+      error
+      ok
+      id
+    }
+  }
+`;

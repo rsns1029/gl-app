@@ -72,7 +72,7 @@ const ActionText = styled.Text`
 
 type EditProfileNavigationProps = NativeStackScreenProps<
   RootStackParamList,
-  'EditProfile'
+  'StackEditProfile'
 >;
 
 export interface EditProfileProps {

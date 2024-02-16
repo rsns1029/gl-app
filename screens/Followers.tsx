@@ -2,10 +2,9 @@ import styled from 'styled-components/native';
 import UserItem from '../components/UserItem';
 import {useState} from 'react';
 import {FlatList} from 'react-native';
-import {useSeeFollowersQuery, useSeeProfileQuery} from '../generated/graphql';
+import {useSeeFollowersQuery} from '../generated/graphql';
 import {RootStackParamList} from '../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import useMe from '../hooks/useMe.tsx';
 
 type FollowersProps = NativeStackScreenProps<
   RootStackParamList,
@@ -31,7 +30,7 @@ const Username = styled.Text`
 const Followers = ({route}: FollowersProps) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const {data} = useSeeFollowersQuery({
+  const {data, refetch} = useSeeFollowersQuery({
     variables: {
       page: 1,
     },

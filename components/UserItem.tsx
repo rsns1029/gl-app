@@ -7,6 +7,7 @@ import {
   useFollowUserMutation,
   useUnfollowUserMutation,
 } from '../generated/graphql';
+import useMe from '../hooks/useMe';
 
 type UserItemNavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -66,71 +67,74 @@ const FollowButtonText = styled.Text`
   color: ${props => props.theme.fontColor};
 `;
 
-const UserItem = ({username, avatar, isFollowing}: UserItemProps) => {
-  let followUsername: string | undefined;
-  let unfollowUsername: string | undefined;
+const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
   const navigation = useNavigation<UserItemNavigationProps>();
-  // const [followUserMutation, {loading: followUserLoading}] =
-  //   useFollowUserMutation({
-  //     update: (cache, {data}) => {
-  //       if (data?.followUser.ok === false) {
-  //         return;
-  //       }
-  //
-  //       followUsername = data?.followUser.user?.username;
-  //       cache.modify({
-  //         id: `User:${data?.followUser.user?.id}`,
-  //         fields: {
-  //           isFollowing: (isFollowing: boolean) => true,
-  //           totalFollowers: (totalFollowers: number) => totalFollowers + 1,
-  //         },
-  //       });
-  //       cache.modify({
-  //         id: `User:${loggedInUser?.id}`,
-  //         fields: {
-  //           totalFollowing: (totalFollowing: number) => totalFollowing + 1,
-  //         },
-  //       });
-  //     },
-  //   });
-  // const [unfollowUserMutation, {loading: unfollowUserLoading}] =
-  //   useUnfollowUserMutation({
-  //     update: (cache, {data}) => {
-  //       if (data?.unfollowUser.ok === false) {
-  //         return;
-  //       }
-  //
-  //       unfollowUsername = data?.unfollowUser.user?.username;
-  //       cache.modify({
-  //         id: `User:${data?.unfollowUser.user?.id}`,
-  //         fields: {
-  //           isFollowing: (isFollowing: boolean) => false,
-  //           totalFollowers: (totalFollowers: number) => totalFollowers - 1,
-  //         },
-  //       });
-  //       cache.modify({
-  //         id: `User:${loggedInUser?.id}`,
-  //         fields: {
-  //           totalFollowing: (totalFollowing: number) => totalFollowing - 1,
-  //         },
-  //       });
-  //     },
-  //   });
+  const {data: meData} = useMe();
+
+  const [followUserMutation, {loading: followUserLoading}] =
+    useFollowUserMutation({
+      update: (cache, {data}) => {
+        if (data?.followUser.ok === false) {
+          return;
+        }
+        cache.modify({
+          id: `User:${data?.followUser.id}`,
+          fields: {
+            isFollowing: (isFollowing: boolean) => true,
+            totalFollowers: (totalFollowers: number) => totalFollowers + 1,
+          },
+        });
+        cache.modify({
+          id: `User:${meData?.me.id}`,
+          fields: {
+            totalFollowing: (totalFollowing: number) => totalFollowing + 1,
+          },
+        });
+      },
+    });
+  const [unfollowUserMutation, {loading: unfollowUserLoading}] =
+    useUnfollowUserMutation({
+      update: (cache, {data}) => {
+        if (data?.unfollowUser.ok === false) {
+          return;
+        }
+
+        cache.modify({
+          id: `User:${data?.unfollowUser.id}`,
+          fields: {
+            isFollowing: (isFollowing: boolean) => false,
+            totalFollowers: (totalFollowers: number) => totalFollowers - 1,
+          },
+        });
+        cache.modify({
+          id: `User:${meData?.me.id}`,
+          fields: {
+            totalFollowing: (totalFollowing: number) => totalFollowing - 1,
+          },
+        });
+      },
+    });
 
   const handleNavigateToProfileNavigation = (): void => {
     navigation.navigate('StackProfileNavigation');
   };
 
-  // const handleToggleFollow = (isFollowing: boolean, username: string): void => {
-  //   if (followUserLoading === true || unfollowUserLoading === true) {
-  //     return;
-  //   }
-  //   if (isFollowing === false) {
-  //     followUserMutation({variables: {username}});
-  //   } else if (isFollowing === true) {
-  //     unfollowUserMutation({variables: {username}});
-  //   }
-  // };
+  const handleToggleFollow = (
+    isFollowing: boolean,
+    username: string,
+    id: number,
+  ): void => {
+    if (followUserLoading === true || unfollowUserLoading === true) {
+      return;
+    }
+    if (isFollowing === false) {
+      console.log(id);
+      const followUserId = id;
+      followUserMutation({variables: {followUserId}});
+    } else if (isFollowing === true) {
+      unfollowUserMutation({variables: {username}});
+    }
+  };
 
   return (
     <Container>
@@ -145,19 +149,18 @@ const UserItem = ({username, avatar, isFollowing}: UserItemProps) => {
           {/*<Name>{name}</Name>*/}
         </UserInfoContainer>
       </UserContainer>
-      {/*{!isMe && (*/}
-      {/*  <FollowButton onPress={() => handleToggleFollow(isFollowing, username)}>*/}
-      {/*    <FollowButtonText>*/}
-      {/*      {followUserLoading === true || unfollowUserLoading === true ? (*/}
-      {/*        <Loading />*/}
-      {/*      ) : isFollowing ? (*/}
-      {/*        '팔로우 취소'*/}
-      {/*      ) : (*/}
-      {/*        '팔로우'*/}
-      {/*      )}*/}
-      {/*    </FollowButtonText>*/}
-      {/*  </FollowButton>*/}
-      {/*)}*/}
+      <FollowButton
+        onPress={() => handleToggleFollow(isFollowing, username, id)}>
+        <FollowButtonText>
+          {followUserLoading === true || unfollowUserLoading === true ? (
+            <Loading />
+          ) : isFollowing ? (
+            '팔로우 취소'
+          ) : (
+            '팔로우'
+          )}
+        </FollowButtonText>
+      </FollowButton>
     </Container>
   );
 };

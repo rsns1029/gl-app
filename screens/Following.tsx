@@ -36,7 +36,7 @@ const Followering = ({route}: FolloweringProps) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const {data: meData} = useMe();
 
-  const {data} = useSeeFollowingQuery({
+  const {data, refetch} = useSeeFollowingQuery({
     variables: {
       page: 1,
     },
@@ -50,8 +50,8 @@ const Followering = ({route}: FolloweringProps) => {
     setRefreshing(false);
   };
 
-  const renderItem = ({item}: {item: any}) => {
-    return <Username>{item.username}</Username>;
+  const renderItem = ({item: following}: any) => {
+    return <UserItem {...following} />;
   };
 
   return (

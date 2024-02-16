@@ -15,8 +15,6 @@ export type RootStackParamList = {
   StepTwo: any;
   StepThree: any;
   Rooms: any;
-  EditProfile: EditProfileProps;
-  ProfileStackScreen: undefined;
   MyProfile: undefined;
   Map: undefined;
   Matches: undefined;
@@ -25,6 +23,7 @@ export type RootStackParamList = {
   StackFollowing: any;
   StackProfile: any;
   StackMessagesNav: any;
+  StackEditProfile: any;
 };
 
 export interface User {
