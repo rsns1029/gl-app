@@ -13,10 +13,8 @@ type UserItemNavigationProps = NativeStackNavigationProp<RootStackParamList>;
 interface UserItemProps {
   id: number;
   username: string;
-  name: string;
-  avatarUrl: string;
+  avatar: string;
   isFollowing: boolean;
-  isMe: boolean;
 }
 
 const Container = styled.View`
@@ -45,7 +43,7 @@ const UserInfoContainer = styled.View`
 
 const Username = styled.Text`
   font-weight: bold;
-  color: ${props => props.theme.textColor};
+  color: ${props => props.theme.fontColor};
   font-size: 15px;
   margin-bottom: 5px;
 `;
@@ -65,116 +63,101 @@ const FollowButton = styled.TouchableOpacity`
 
 const FollowButtonText = styled.Text`
   font-weight: bold;
-  color: white;
+  color: ${props => props.theme.fontColor};
 `;
 
-const UserItem = ({
-  id,
-  username,
-  name,
-  avatarUrl,
-  isFollowing,
-  isMe,
-}: UserItemProps) => {
+const UserItem = ({username, avatar, isFollowing}: UserItemProps) => {
   let followUsername: string | undefined;
   let unfollowUsername: string | undefined;
-  const loggedInUser = useLoggedInUser();
   const navigation = useNavigation<UserItemNavigationProps>();
-  const [followUserMutation, {loading: followUserLoading}] =
-    useFollowUserMutation({
-      update: (cache, {data}) => {
-        if (data?.followUser.ok === false) {
-          return;
-        }
-
-        followUsername = data?.followUser.user?.username;
-        cache.modify({
-          id: `User:${data?.followUser.user?.id}`,
-          fields: {
-            isFollowing: (isFollowing: boolean) => true,
-            totalFollowers: (totalFollowers: number) => totalFollowers + 1,
-          },
-        });
-        cache.modify({
-          id: `User:${loggedInUser?.id}`,
-          fields: {
-            totalFollowing: (totalFollowing: number) => totalFollowing + 1,
-          },
-        });
-      },
-    });
-  const [unfollowUserMutation, {loading: unfollowUserLoading}] =
-    useUnfollowUserMutation({
-      update: (cache, {data}) => {
-        if (data?.unfollowUser.ok === false) {
-          return;
-        }
-
-        unfollowUsername = data?.unfollowUser.user?.username;
-        cache.modify({
-          id: `User:${data?.unfollowUser.user?.id}`,
-          fields: {
-            isFollowing: (isFollowing: boolean) => false,
-            totalFollowers: (totalFollowers: number) => totalFollowers - 1,
-          },
-        });
-        cache.modify({
-          id: `User:${loggedInUser?.id}`,
-          fields: {
-            totalFollowing: (totalFollowing: number) => totalFollowing - 1,
-          },
-        });
-      },
-    });
+  // const [followUserMutation, {loading: followUserLoading}] =
+  //   useFollowUserMutation({
+  //     update: (cache, {data}) => {
+  //       if (data?.followUser.ok === false) {
+  //         return;
+  //       }
+  //
+  //       followUsername = data?.followUser.user?.username;
+  //       cache.modify({
+  //         id: `User:${data?.followUser.user?.id}`,
+  //         fields: {
+  //           isFollowing: (isFollowing: boolean) => true,
+  //           totalFollowers: (totalFollowers: number) => totalFollowers + 1,
+  //         },
+  //       });
+  //       cache.modify({
+  //         id: `User:${loggedInUser?.id}`,
+  //         fields: {
+  //           totalFollowing: (totalFollowing: number) => totalFollowing + 1,
+  //         },
+  //       });
+  //     },
+  //   });
+  // const [unfollowUserMutation, {loading: unfollowUserLoading}] =
+  //   useUnfollowUserMutation({
+  //     update: (cache, {data}) => {
+  //       if (data?.unfollowUser.ok === false) {
+  //         return;
+  //       }
+  //
+  //       unfollowUsername = data?.unfollowUser.user?.username;
+  //       cache.modify({
+  //         id: `User:${data?.unfollowUser.user?.id}`,
+  //         fields: {
+  //           isFollowing: (isFollowing: boolean) => false,
+  //           totalFollowers: (totalFollowers: number) => totalFollowers - 1,
+  //         },
+  //       });
+  //       cache.modify({
+  //         id: `User:${loggedInUser?.id}`,
+  //         fields: {
+  //           totalFollowing: (totalFollowing: number) => totalFollowing - 1,
+  //         },
+  //       });
+  //     },
+  //   });
 
   const handleNavigateToProfileNavigation = (): void => {
-    navigation.navigate('StackProfileNavigation', {
-      id,
-      username,
-      name,
-      avatarUrl,
-      isFollowing,
-      isMe,
-    });
+    navigation.navigate('StackProfileNavigation');
   };
 
-  const handleToggleFollow = (isFollowing: boolean, username: string): void => {
-    if (followUserLoading === true || unfollowUserLoading === true) {
-      return;
-    }
-    if (isFollowing === false) {
-      followUserMutation({variables: {username}});
-    } else if (isFollowing === true) {
-      unfollowUserMutation({variables: {username}});
-    }
-  };
+  // const handleToggleFollow = (isFollowing: boolean, username: string): void => {
+  //   if (followUserLoading === true || unfollowUserLoading === true) {
+  //     return;
+  //   }
+  //   if (isFollowing === false) {
+  //     followUserMutation({variables: {username}});
+  //   } else if (isFollowing === true) {
+  //     unfollowUserMutation({variables: {username}});
+  //   }
+  // };
 
   return (
     <Container>
       <UserContainer onPress={handleNavigateToProfileNavigation}>
-        {avatarUrl ? (
-          <UserAvatar source={{uri: avatarUrl}} />
+        {avatar ? (
+          <UserAvatar source={{uri: avatar}} />
         ) : (
           <UserAvatar source={require('../assets/basic_user.jpeg')} />
         )}
         <UserInfoContainer>
           <Username>{username}</Username>
-          <Name>{name}</Name>
+          {/*<Name>{name}</Name>*/}
         </UserInfoContainer>
       </UserContainer>
-      {!isMe && (
-        <FollowButton onPress={() => handleToggleFollow(isFollowing, username)}>
-          <FollowButtonText>
-            {followUserLoading === true || unfollowUserLoading === true ? (
-              <Loading />
-            ) : isFollowing ? (
-              '팔로우 취소'
-            ) : (
-              '팔로우'
-            )}
-          </FollowButtonText>
-        </FollowButton>
-      )}
+      {/*{!isMe && (*/}
+      {/*  <FollowButton onPress={() => handleToggleFollow(isFollowing, username)}>*/}
+      {/*    <FollowButtonText>*/}
+      {/*      {followUserLoading === true || unfollowUserLoading === true ? (*/}
+      {/*        <Loading />*/}
+      {/*      ) : isFollowing ? (*/}
+      {/*        '팔로우 취소'*/}
+      {/*      ) : (*/}
+      {/*        '팔로우'*/}
+      {/*      )}*/}
+      {/*    </FollowButtonText>*/}
+      {/*  </FollowButton>*/}
+      {/*)}*/}
     </Container>
   );
 };

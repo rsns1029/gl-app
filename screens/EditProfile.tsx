@@ -22,7 +22,7 @@ const CancelButton = styled.TouchableOpacity``;
 const Title = styled.Text`
   font-size: 16px;
   font-weight: bold;
-  color: white;
+  color: ${props => props.theme.fontColor};
 `;
 
 const CompleteButton = styled.TouchableOpacity``;
@@ -40,7 +40,7 @@ const ProfileImage = styled.Image`
 `;
 
 const ProfileImageText = styled.Text`
-  color: white;
+  color: ${props => props.theme.fontColor};
   margin-top: 10px;
 `;
 
@@ -50,7 +50,7 @@ const InputContainer = styled.View`
 
 const InputLabel = styled.Text`
   opacity: 0.5;
-  color: white;
+  color: ${props => props.theme.fontColor};
 `;
 
 const TextInputStyled = styled.TextInput`

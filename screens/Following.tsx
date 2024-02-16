@@ -27,7 +27,7 @@ const FlatListContainer = styled(FlatList)`
 
 const Username = styled.Text`
   font-weight: bold;
-  color: white;
+  color: ${props => props.theme.fontColor};
   font-size: 15px;
   margin-bottom: 5px;
 `;

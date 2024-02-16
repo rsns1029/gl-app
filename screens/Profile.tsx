@@ -77,7 +77,7 @@ const FollowingContainer = styled.TouchableOpacity`
 const CommonNumber = styled.Text`
   font-weight: bold;
   font-size: 20px;
-  color: white;
+  color: ${props => props.theme.fontColor};
 `;
 
 const CommonText = styled.Text`

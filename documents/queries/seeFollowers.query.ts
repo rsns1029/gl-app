@@ -7,6 +7,8 @@ gql`
       followers {
         id
         username
+        avatar
+        isFollowing
       }
       ok
       totalPages

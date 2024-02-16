@@ -399,7 +399,7 @@ export type SeeFollowersQueryVariables = Exact<{
 }>;
 
 
-export type SeeFollowersQuery = { __typename?: 'Query', seeFollowers: { __typename?: 'seeFollowersResult', error?: string | null, ok: boolean, totalPages?: number | null, followers?: Array<{ __typename?: 'User', id: number, username: string } | null> | null } };
+export type SeeFollowersQuery = { __typename?: 'Query', seeFollowers: { __typename?: 'seeFollowersResult', error?: string | null, ok: boolean, totalPages?: number | null, followers?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null, isFollowing: boolean } | null> | null } };
 
 export type SeeProfileQueryVariables = Exact<{
   seeProfileId: Scalars['Int']['input'];
@@ -642,6 +642,8 @@ export const SeeFollowersDocument = gql`
     followers {
       id
       username
+      avatar
+      isFollowing
     }
     ok
     totalPages

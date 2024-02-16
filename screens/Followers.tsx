@@ -23,15 +23,13 @@ const FlatListContainer = styled(FlatList)`
 
 const Username = styled.Text`
   font-weight: bold;
-  color: white;
+  color: ${props => props.theme.fontColor};
   font-size: 15px;
   margin-bottom: 5px;
 `;
 
 const Followers = ({route}: FollowersProps) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
-  const {data: meData} = useMe();
 
   const {data} = useSeeFollowersQuery({
     variables: {
@@ -47,8 +45,8 @@ const Followers = ({route}: FollowersProps) => {
     setRefreshing(false);
   };
 
-  const renderItem = ({item}: {item: any}) => {
-    return <Username>{item.username}</Username>;
+  const renderItem = ({item: followers}: any) => {
+    return <UserItem {...followers} />;
   };
 
   return (
