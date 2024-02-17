@@ -204,7 +204,7 @@ export type Query = {
   seeProfile?: Maybe<User>;
   seeRoom?: Maybe<Room>;
   seeRooms?: Maybe<Array<Maybe<Room>>>;
-  selectLocations: Array<Maybe<Location>>;
+  selectLocations?: Maybe<Array<Location>>;
   showAlarms?: Maybe<Alarms>;
   validCreateAccount: ValidResponse;
 };
@@ -401,6 +401,14 @@ export type SeeRoomQueryVariables = Exact<{
 
 
 export type SeeRoomQuery = { __typename?: 'Query', seeRoom?: { __typename?: 'Room', id: number, messages?: Array<{ __typename?: 'Message', id: number, payload: string, read: boolean, user: { __typename?: 'User', id: number, username: string, avatar?: string | null } } | null> | null } | null };
+
+export type SelectLocationsQueryVariables = Exact<{
+  lat: Scalars['Float']['input'];
+  lon: Scalars['Float']['input'];
+}>;
+
+
+export type SelectLocationsQuery = { __typename?: 'Query', selectLocations?: Array<{ __typename?: 'Location', userId: number, lon?: number | null, lat?: number | null }> | null };
 
 export type ValidCreateAccountQueryVariables = Exact<{
   username?: InputMaybe<Scalars['String']['input']>;
@@ -670,6 +678,49 @@ export type SeeRoomQueryHookResult = ReturnType<typeof useSeeRoomQuery>;
 export type SeeRoomLazyQueryHookResult = ReturnType<typeof useSeeRoomLazyQuery>;
 export type SeeRoomSuspenseQueryHookResult = ReturnType<typeof useSeeRoomSuspenseQuery>;
 export type SeeRoomQueryResult = Apollo.QueryResult<SeeRoomQuery, SeeRoomQueryVariables>;
+export const SelectLocationsDocument = gql`
+    query SelectLocations($lat: Float!, $lon: Float!) {
+  selectLocations(lat: $lat, lon: $lon) {
+    userId
+    lon
+    lat
+  }
+}
+    `;
+
+/**
+ * __useSelectLocationsQuery__
+ *
+ * To run a query within a React component, call `useSelectLocationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelectLocationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelectLocationsQuery({
+ *   variables: {
+ *      lat: // value for 'lat'
+ *      lon: // value for 'lon'
+ *   },
+ * });
+ */
+export function useSelectLocationsQuery(baseOptions: Apollo.QueryHookOptions<SelectLocationsQuery, SelectLocationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SelectLocationsQuery, SelectLocationsQueryVariables>(SelectLocationsDocument, options);
+      }
+export function useSelectLocationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SelectLocationsQuery, SelectLocationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SelectLocationsQuery, SelectLocationsQueryVariables>(SelectLocationsDocument, options);
+        }
+export function useSelectLocationsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SelectLocationsQuery, SelectLocationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SelectLocationsQuery, SelectLocationsQueryVariables>(SelectLocationsDocument, options);
+        }
+export type SelectLocationsQueryHookResult = ReturnType<typeof useSelectLocationsQuery>;
+export type SelectLocationsLazyQueryHookResult = ReturnType<typeof useSelectLocationsLazyQuery>;
+export type SelectLocationsSuspenseQueryHookResult = ReturnType<typeof useSelectLocationsSuspenseQuery>;
+export type SelectLocationsQueryResult = Apollo.QueryResult<SelectLocationsQuery, SelectLocationsQueryVariables>;
 export const ValidCreateAccountDocument = gql`
     query ValidCreateAccount($username: String, $nextPage: String) {
   validCreateAccount(username: $username, nextPage: $nextPage) {
