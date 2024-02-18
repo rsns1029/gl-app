@@ -4,6 +4,7 @@ import MapView, { Marker, Region } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import { PermissionsAndroid } from 'react-native';
 
+
 interface LocationCoords {
   latitude: number;
   longitude: number;
@@ -31,20 +32,22 @@ export default function MapScreen() {
         ]);
 
         if (
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] === PermissionsAndroid.RESULTS.GRANTED &&
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] === PermissionsAndroid.RESULTS.GRANTED
+          granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+          granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
+          PermissionsAndroid.RESULTS.GRANTED
         ) {
           Geolocation.getCurrentPosition(
-            (position) => {
+            position => {
               setLocation({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
               });
             },
-            (error) => {
-              console.error("Error getting location:", error);
+            error => {
+              console.error('Error getting location:', error);
             },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
           );
         } else {
           console.warn('Location permission denied');
@@ -66,11 +69,13 @@ export default function MapScreen() {
       setTimeout(() => {
         const newPhotos = Array.from({ length: 10 }, (_, index) => ({
           id: (page - 1) * 10 + index + 1,
-          url: `https://via.placeholder.com/300/${Math.floor(Math.random() * 16777215).toString(16)}/FFFFFF?text=Photo ${page * 10 + index + 1}`
+          url: `https://via.placeholder.com/300/${Math.floor(
+            Math.random() * 16777215,
+          ).toString(16)}/FFFFFF?text=Photo ${page * 10 + index + 1}`,
         }));
-        setPhotos((prevPhotos) => [...prevPhotos, ...newPhotos]);
+        setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
         setIsLoading(false);
-        setPage((prevPage) => prevPage + 1);
+        setPage(prevPage => prevPage + 1);
       }, 1000);
     }
   };
@@ -102,47 +107,47 @@ export default function MapScreen() {
 
   const customMapStyle = [
     {
-      "elementType": "geometry",
-      "stylers": [
+      elementType: 'geometry',
+      stylers: [
         {
-          "color": "#242f3e"
-        }
-      ]
+          color: '#242f3e',
+        },
+      ],
     },
     {
-      "elementType": "labels.text.fill",
-      "stylers": [
+      elementType: 'labels.text.fill',
+      stylers: [
         {
-          "color": "#746855"
-        }
-      ]
+          color: '#746855',
+        },
+      ],
     },
     {
-      "elementType": "labels.text.stroke",
-      "stylers": [
+      elementType: 'labels.text.stroke',
+      stylers: [
         {
-          "color": "#242f3e"
-        }
-      ]
+          color: '#242f3e',
+        },
+      ],
     },
     {
-      "featureType": "administrative.locality",
-      "elementType": "labels.text.fill",
-      "stylers": [
+      featureType: 'administrative.locality',
+      elementType: 'labels.text.fill',
+      stylers: [
         {
-          "color": "#d59563"
-        }
-      ]
+          color: '#d59563',
+        },
+      ],
     },
     // 도로 색상이 이상함
     {
-      "featureType": "road",
-      "elementType": "geometry",
-      "stylers": [
+      featureType: 'road',
+      elementType: 'geometry',
+      stylers: [
         {
-          "color": "#FFFFFF" // 도로 스타일 변경
-        }
-      ]
+          color: '#FFFFFF', // 도로 스타일 변경
+        },
+      ],
     },
   ];
 
@@ -177,7 +182,7 @@ export default function MapScreen() {
                 />
               </TouchableOpacity>
             )}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
             onEndReached={handleEndReached}
             onEndReachedThreshold={0.1}
             ListFooterComponent={isLoading ? <ActivityIndicator /> : null}

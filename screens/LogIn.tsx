@@ -1,12 +1,12 @@
-import {gql, useMutation} from '@apollo/client';
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
+import { gql, useMutation } from '@apollo/client';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import AuthLayout from '../components/auth/AuthLayout';
-import {TextInput} from '../components/auth/AuthShared';
-import {useForm} from 'react-hook-form';
+import { TextInput } from '../components/auth/AuthShared';
+import { useForm } from 'react-hook-form';
 import AuthButton from '../components/auth/AuthButton';
-import {logUserIn} from '../apollo';
-import {RootStackParamList} from '../shared/shared.types';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import { logUserIn } from '../apollo';
+import { RootStackParamList } from '../shared/shared.types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ErrorMessage from '../components/text/ErrorMessage';
 
 type LoginNavigationProps = NativeStackScreenProps<
@@ -29,10 +29,10 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const Login = ({route}: LoginNavigationProps) => {
+const Login = ({ route }: LoginNavigationProps) => {
   const [errorMsg, setErrorMsg] = useState('');
   const passwordRef: MutableRefObject<null> = useRef(null);
-  const {register, handleSubmit, setValue, watch} = useForm<LoginFormData>({
+  const { register, handleSubmit, setValue, watch } = useForm<LoginFormData>({
     defaultValues: {
       username: route.params?.username,
       password: route.params?.password,
@@ -41,7 +41,7 @@ const Login = ({route}: LoginNavigationProps) => {
 
   const onCompleted = async (data: any) => {
     const {
-      login: {ok, token, error},
+      login: { ok, token, error },
     } = data;
     console.log('ok : ', ok);
     console.log('token : ', token);
@@ -65,7 +65,7 @@ const Login = ({route}: LoginNavigationProps) => {
     }
   };
 
-  const [logInMutation, {loading, error}] = useMutation(LOGIN_MUTATION, {
+  const [logInMutation, { loading, error }] = useMutation(LOGIN_MUTATION, {
     onCompleted,
   });
 
