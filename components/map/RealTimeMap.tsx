@@ -8,10 +8,11 @@ import {
   useSubscription,
 } from '@apollo/client';
 import {MAP_UPDATES} from '../../documents/subscriptions/mapUpdates.subscription.ts';
-import {useSelectLocationsQuery} from '../../generated/graphql.ts';
+import {Location, useSelectLocationsQuery} from '../../generated/graphql.ts';
 import useMe from '../../hooks/useMe.tsx';
 import MapScreenLayout from './MapScreenLayOut.tsx';
 import gql from 'graphql-tag';
+// import {LOCATION_FRAGMENT} from '../../fragments.tsx';
 
 interface RealTimeMapProps {
   latitude: number;
@@ -26,11 +27,25 @@ const LOCATION_FRAGMENT = gql`
     lon
   }
 `;
+//
+// const SEE_LOCATIONS_QUERY = gql`
+//   query SelectLocations($lat: Float!, $lon: Float!) {
+//     selectLocations(lat: $lat, lon: $lon) {
+//       ...LocationParts
+//     }
+//   }
+//   ${LOCATION_FRAGMENT}
+// `;
+
+interface LocationDataProps {
+  selectLocations: Array<Location> | null;
+}
 
 export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
   const client: ApolloClient<Object> = useApolloClient();
 
   const {data: meData} = useMe();
+
   const {
     data: realTimeData,
     loading: realTimeLoading,
@@ -47,8 +62,18 @@ export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
         lat: latitude,
         lon: longitude,
       },
+      fetchPolicy: 'network-only',
     },
   );
+
+  // const {data: locationData, loading: initialLoading} =
+  //   useQuery<LocationDataProps>(SEE_LOCATIONS_QUERY, {
+  //     variables: {
+  //       lat: latitude,
+  //       lon: longitude,
+  //     },
+  //     fetchPolicy: 'network-only',
+  //   });
 
   const initialRegion: Region = {
     latitude: latitude || 0,
@@ -62,6 +87,11 @@ export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
     console.log('locationData : ', locationData);
     if (realTimeData && realTimeData.mapUpdates) {
       const {userId, lat, lon} = realTimeData.mapUpdates;
+      const locationId = client.cache.identify({
+        __typename: 'Location',
+        userId,
+      });
+
       console.log('userId : ', userId);
     }
   }, [realTimeData, client]);
@@ -84,7 +114,7 @@ export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
           locationData.selectLocations &&
           locationData.selectLocations.map(
             location =>
-              !location.userId === meData.me.id &&
+              !location.userId === meData?.me?.id &&
               location.lat &&
               location.lon && (
                 <Marker
