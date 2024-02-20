@@ -8,72 +8,67 @@ import {
   useSubscription,
 } from '@apollo/client';
 import {MAP_UPDATES} from '../../documents/subscriptions/mapUpdates.subscription.ts';
-import {Location, useSelectLocationsQuery} from '../../generated/graphql.ts';
+import {
+  Location,
+  SelectLocationsQuery,
+  useSelectLocationsQuery,
+} from '../../generated/graphql.ts';
 import useMe from '../../hooks/useMe.tsx';
 import MapScreenLayout from './MapScreenLayOut.tsx';
+import {LOCATION_FRAGMENT} from '../../fragments.tsx';
 import gql from 'graphql-tag';
-// import {LOCATION_FRAGMENT} from '../../fragments.tsx';
 
 interface RealTimeMapProps {
   latitude: number;
   longitude: number;
 }
 
-const LOCATION_FRAGMENT = gql`
-  fragment LocationFields on Location {
-    __typename
-    userId
-    lat
-    lon
-  }
-`;
-//
-// const SEE_LOCATIONS_QUERY = gql`
-//   query SelectLocations($lat: Float!, $lon: Float!) {
-//     selectLocations(lat: $lat, lon: $lon) {
-//       ...LocationParts
-//     }
-//   }
-//   ${LOCATION_FRAGMENT}
-// `;
-
 interface LocationDataProps {
-  selectLocations: Array<Location> | null;
+  selectLocations: {
+    id: number;
+    locations: Array<Location> | null;
+  };
 }
+
+const SEE_LOCATIONS_QUERY = gql`
+  query SelectLocations($lat: Float!, $lon: Float!) {
+    selectLocations(lat: $lat, lon: $lon) {
+      id
+      locations {
+        ...LocationParts
+      }
+    }
+  }
+  ${LOCATION_FRAGMENT}
+`;
 
 export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
   const client: ApolloClient<Object> = useApolloClient();
-
+  const [subscribed, setSubscribed] = useState(false);
   const {data: meData} = useMe();
+  console.log('meData : ', meData);
+
+  console.log(latitude, longitude);
+
+  // const {
+  //   data: realTimeData,
+  //   loading: realTimeLoading,
+  //   error: realTimeError,
+  // } = useSubscription(MAP_UPDATES, {
+  //   variables: {
+  //     generalLat: latitude,
+  //     generalLon: longitude,
+  //   },
+  // });
 
   const {
-    data: realTimeData,
-    loading: realTimeLoading,
-    error: realTimeError,
-  } = useSubscription(MAP_UPDATES, {
-    variables: {
-      generalLat: latitude,
-      generalLon: longitude,
-    },
+    data: locationData,
+    loading: initialLoading,
+    subscribeToMore,
+  } = useQuery<LocationDataProps>(SEE_LOCATIONS_QUERY, {
+    variables: {lat: latitude, lon: longitude},
+    fetchPolicy: 'network-only',
   });
-  const {data: locationData, loading: initialLoading} = useSelectLocationsQuery(
-    {
-      variables: {
-        lat: latitude,
-        lon: longitude,
-      },
-      fetchPolicy: 'network-only',
-    },
-  );
-
-  // const {data: locationData, loading: initialLoading} =
-  //   useQuery<LocationDataProps>(SEE_LOCATIONS_QUERY, {
-  //     variables: {
-  //       lat: latitude,
-  //       lon: longitude,
-  //     },
-  //     fetchPolicy: 'network-only',
-  //   });
 
   const initialRegion: Region = {
     latitude: latitude || 0,
@@ -83,18 +78,68 @@ export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
   };
 
   useEffect(() => {
-    console.log('realTimeData : ', realTimeData);
-    console.log('locationData : ', locationData);
-    if (realTimeData && realTimeData.mapUpdates) {
-      const {userId, lat, lon} = realTimeData.mapUpdates;
-      const locationId = client.cache.identify({
-        __typename: 'Location',
-        userId,
+    if (locationData) {
+      console.log('locationData from here:', locationData);
+      client.writeQuery({
+        query: SEE_LOCATIONS_QUERY,
+        data: locationData,
+        variables: {lat: latitude, lon: longitude},
       });
-
-      console.log('userId : ', userId);
     }
-  }, [realTimeData, client]);
+  }, [locationData, latitude, longitude, client]);
+
+  useEffect(() => {
+    if (locationData && !subscribed) {
+      console.log('subscribed to more');
+      subscribeToMore({
+        document: MAP_UPDATES,
+        variables: {
+          generalLat: latitude,
+          generalLon: longitude,
+        },
+        updateQuery: (prevQuery: SelectLocationsQuery, options: any): any => {
+          // console.log('update Query : ', options);
+          const {
+            subscriptionData: {
+              data: {mapUpdates: realTimeLocation},
+            },
+          } = options;
+          console.log('realTimeLocation.userId  : ', realTimeLocation.userId);
+          const locationFragment = client.cache.writeFragment({
+            fragment: LOCATION_FRAGMENT,
+            data: realTimeLocation,
+          });
+
+          console.log('locationFragment : ', locationFragment);
+          const cacheId = client.cache.identify({
+            __typename: 'Location',
+            userId: realTimeLocation.userId,
+          });
+          console.log(`LocationRoom:${locationData.selectLocations.id}`);
+          client.cache.modify({
+            id: `LocationRoom:${locationData.selectLocations.id}`,
+            fields: {
+              locations(prev) {
+                const existingLocation = prev.find(
+                  (aLocation: any) => aLocation.__ref === cacheId,
+                );
+                console.log('existingLocation : ', existingLocation);
+                console.log(
+                  'locationFragment.__ref : ',
+                  locationFragment?.__ref,
+                );
+                if (existingLocation) {
+                  return prev;
+                }
+                return [...prev, locationFragment];
+              },
+            },
+          });
+        },
+      });
+      setSubscribed(true);
+    }
+  }, [locationData, subscribed]);
 
   return (
     <MapScreenLayout loading={initialLoading}>
@@ -103,18 +148,12 @@ export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
         region={initialRegion}
         showsUserLocation={true}
         customMapStyle={customMapStyle}>
-        <Marker
-          coordinate={{
-            latitude: latitude,
-            longitude: longitude,
-          }}
-          title="You are here"
-        />
         {locationData &&
+          meData &&
           locationData.selectLocations &&
-          locationData.selectLocations.map(
+          locationData.selectLocations.locations &&
+          locationData.selectLocations.locations.map(
             location =>
-              !location.userId === meData?.me?.id &&
               location.lat &&
               location.lon && (
                 <Marker

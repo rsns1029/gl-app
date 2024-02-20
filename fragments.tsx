@@ -24,7 +24,7 @@ export const MATCH_FRAGMENT = gql`
 export const LOCATION_FRAGMENT = gql`
   fragment LocationParts on Location {
     userId
-    lon
     lat
+    lon
   }
 `;

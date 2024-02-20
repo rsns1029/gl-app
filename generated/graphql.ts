@@ -46,6 +46,12 @@ export type Location = {
   vectorDistance?: Maybe<Scalars['Float']['output']>;
 };
 
+export type LocationRoom = {
+  __typename?: 'LocationRoom';
+  id: Scalars['Int']['output'];
+  locations?: Maybe<Array<Location>>;
+};
+
 export type LoginResult = {
   __typename?: 'LoginResult';
   error?: Maybe<Scalars['String']['output']>;
@@ -204,7 +210,7 @@ export type Query = {
   seeProfile?: Maybe<User>;
   seeRoom?: Maybe<Room>;
   seeRooms?: Maybe<Array<Maybe<Room>>>;
-  selectLocations?: Maybe<Array<Location>>;
+  selectLocations?: Maybe<LocationRoom>;
   showAlarms?: Maybe<Alarms>;
   validCreateAccount: ValidResponse;
 };
@@ -408,7 +414,7 @@ export type SelectLocationsQueryVariables = Exact<{
 }>;
 
 
-export type SelectLocationsQuery = { __typename?: 'Query', selectLocations?: Array<{ __typename?: 'Location', userId: number, lon?: number | null, lat?: number | null }> | null };
+export type SelectLocationsQuery = { __typename?: 'Query', selectLocations?: { __typename?: 'LocationRoom', id: number, locations?: Array<{ __typename?: 'Location', userId: number, lat?: number | null, lon?: number | null }> | null } | null };
 
 export type ValidCreateAccountQueryVariables = Exact<{
   username?: InputMaybe<Scalars['String']['input']>;
@@ -681,9 +687,12 @@ export type SeeRoomQueryResult = Apollo.QueryResult<SeeRoomQuery, SeeRoomQueryVa
 export const SelectLocationsDocument = gql`
     query SelectLocations($lat: Float!, $lon: Float!) {
   selectLocations(lat: $lat, lon: $lon) {
-    userId
-    lon
-    lat
+    id
+    locations {
+      userId
+      lat
+      lon
+    }
   }
 }
     `;

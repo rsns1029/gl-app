@@ -13,11 +13,8 @@ import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
-import {
-  FragmentDefinitionNode,
-  Location,
-  OperationDefinitionNode,
-} from 'graphql';
+import {FragmentDefinitionNode, OperationDefinitionNode} from 'graphql';
+import {LocationRoom} from './generated/graphql.ts';
 
 export const isLoggedInVar = makeVar<boolean>(false);
 export const tokenVar = makeVar<string | null>(null);
