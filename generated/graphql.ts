@@ -46,6 +46,12 @@ export type Location = {
   vectorDistance?: Maybe<Scalars['Float']['output']>;
 };
 
+export type LocationRoom = {
+  __typename?: 'LocationRoom';
+  id: Scalars['Int']['output'];
+  locations?: Maybe<Array<Location>>;
+};
+
 export type LoginResult = {
   __typename?: 'LoginResult';
   error?: Maybe<Scalars['String']['output']>;
@@ -204,7 +210,7 @@ export type Query = {
   seeProfile?: Maybe<User>;
   seeRoom?: Maybe<Room>;
   seeRooms?: Maybe<Array<Maybe<Room>>>;
-  selectLocations: Array<Maybe<Location>>;
+  selectLocations?: Maybe<LocationRoom>;
   showAlarms?: Maybe<Alarms>;
   validCreateAccount: ValidResponse;
 };

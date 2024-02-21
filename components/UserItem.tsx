@@ -8,6 +8,7 @@ import {
   useUnfollowUserMutation,
 } from '../generated/graphql';
 import useMe from '../hooks/useMe';
+import {useState} from 'react';
 
 type UserItemNavigationProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -71,25 +72,32 @@ const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
   const navigation = useNavigation<UserItemNavigationProps>();
   const {data: meData} = useMe();
 
+  const [followState, setFollowState] = useState(isFollowing);
+
   const [followUserMutation, {loading: followUserLoading}] =
     useFollowUserMutation({
       update: (cache, {data}) => {
         if (data?.followUser.ok === false) {
+          console.log('follow not ok, error : ', data?.followUser.error);
           return;
         }
-        cache.modify({
-          id: `User:${data?.followUser.id}`,
-          fields: {
-            isFollowing: (isFollowing: boolean) => true,
-            totalFollowers: (totalFollowers: number) => totalFollowers + 1,
-          },
-        });
-        cache.modify({
-          id: `User:${meData?.me.id}`,
-          fields: {
-            totalFollowing: (totalFollowing: number) => totalFollowing + 1,
-          },
-        });
+        if (data?.followUser.ok === true) {
+          cache.modify({
+            id: `User:${id}`,
+            fields: {
+              isFollowing: () => isFollowing,
+              totalFollowers: (totalFollowers: number = 0) =>
+                totalFollowers + 1,
+            },
+          });
+          cache.modify({
+            id: `User:${meData?.me.id}`,
+            fields: {
+              totalFollowing: (totalFollowing: number = 0) =>
+                totalFollowing + 1,
+            },
+          });
+        }
       },
     });
   const [unfollowUserMutation, {loading: unfollowUserLoading}] =
@@ -119,21 +127,25 @@ const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
     navigation.navigate('StackProfileNavigation');
   };
 
-  const handleToggleFollow = (
+  const handleToggleFollow = async (
     isFollowing: boolean,
     username: string,
     id: number,
-  ): void => {
+  ): Promise<void> => {
+    console.log('handleToggleFollow 들어옴 ....');
     if (followUserLoading === true || unfollowUserLoading === true) {
       return;
     }
     if (isFollowing === false) {
-      console.log(id);
+      console.log('isFollowing is false, ', id);
       const followUserId = id;
-      followUserMutation({variables: {followUserId}});
-    } else if (isFollowing === true) {
-      unfollowUserMutation({variables: {username}});
+      await followUserMutation({variables: {followUserId}});
+    } else {
+      console.log('isFollowing is true, ', id);
+      await unfollowUserMutation({variables: {username}});
     }
+
+    setFollowState(!followState);
   };
 
   return (
@@ -152,13 +164,15 @@ const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
       <FollowButton
         onPress={() => handleToggleFollow(isFollowing, username, id)}>
         <FollowButtonText>
-          {followUserLoading === true || unfollowUserLoading === true ? (
-            <Loading />
-          ) : isFollowing ? (
-            '팔로우 취소'
-          ) : (
-            '팔로우'
-          )}
+          <FollowButtonText>
+            {followUserLoading === true || unfollowUserLoading === true ? (
+              <Loading />
+            ) : followState ? (
+              'Unfollow'
+            ) : (
+              'follow'
+            )}
+          </FollowButtonText>
         </FollowButtonText>
       </FollowButton>
     </Container>

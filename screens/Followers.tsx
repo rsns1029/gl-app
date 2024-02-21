@@ -40,7 +40,11 @@ const Followers = ({route}: FollowersProps) => {
 
   const onRefresh = async (): Promise<void> => {
     setRefreshing(true);
-    await refetch();
+    try {
+      await refetch(); // refetch 함수의 반환값을 직접 await하여 처리
+    } catch (error) {
+      console.error('Error while refreshing:', error);
+    }
     setRefreshing(false);
   };
 
