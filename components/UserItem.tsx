@@ -82,6 +82,7 @@ const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
           return;
         }
         if (data?.followUser.ok === true) {
+          console.log('followUser is ok');
           cache.modify({
             id: `User:${id}`,
             fields: {
@@ -107,19 +108,22 @@ const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
           return;
         }
 
-        cache.modify({
-          id: `User:${data?.unfollowUser.id}`,
-          fields: {
-            isFollowing: (isFollowing: boolean) => false,
-            totalFollowers: (totalFollowers: number) => totalFollowers - 1,
-          },
-        });
-        cache.modify({
-          id: `User:${meData?.me.id}`,
-          fields: {
-            totalFollowing: (totalFollowing: number) => totalFollowing - 1,
-          },
-        });
+        if (data?.unfollowUser.ok === true) {
+          console.log('unfollowUser is ok');
+          cache.modify({
+            id: `User:${data?.unfollowUser.id}`,
+            fields: {
+              isFollowing: (isFollowing: boolean) => false,
+              totalFollowers: (totalFollowers: number) => totalFollowers - 1,
+            },
+          });
+          cache.modify({
+            id: `User:${meData?.me.id}`,
+            fields: {
+              totalFollowing: (totalFollowing: number) => totalFollowing - 1,
+            },
+          });
+        }
       },
     });
 
@@ -131,12 +135,13 @@ const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
     isFollowing: boolean,
     username: string,
     id: number,
+    followState: boolean,
   ): Promise<void> => {
     console.log('handleToggleFollow 들어옴 ....');
     if (followUserLoading === true || unfollowUserLoading === true) {
       return;
     }
-    if (isFollowing === false) {
+    if (followState === false) {
       console.log('isFollowing is false, ', id);
       const followUserId = id;
       await followUserMutation({variables: {followUserId}});
@@ -162,7 +167,9 @@ const UserItem = ({username, avatar, isFollowing, id}: UserItemProps) => {
         </UserInfoContainer>
       </UserContainer>
       <FollowButton
-        onPress={() => handleToggleFollow(isFollowing, username, id)}>
+        onPress={() =>
+          handleToggleFollow(isFollowing, username, id, followState)
+        }>
         <FollowButtonText>
           <FollowButtonText>
             {followUserLoading === true || unfollowUserLoading === true ? (

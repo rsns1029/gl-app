@@ -24,17 +24,17 @@ const ProfileStackNav = () => {
       <Stack.Screen
         name="StackFollowers"
         component={Followers}
-        options={{headerTitle: '팔로워'}}
+        options={{headerTitle: 'Follower'}}
       />
       <Stack.Screen
         name="StackFollowing"
         component={Following}
-        options={{headerTitle: '팔로잉'}}
+        options={{headerTitle: 'Following'}}
       />
       <Stack.Screen
         name="StackEditProfile"
         component={EditProfile}
-        options={{headerTitle: '프로필 수정'}}
+        options={{headerTitle: 'Edit Profile'}}
       />
     </Stack.Navigator>
   );

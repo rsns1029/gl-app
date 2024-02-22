@@ -319,15 +319,15 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                   <CommonNumber>
                     {seeProfileData?.seeProfile.user?.totalPhotos ?? 0}
                   </CommonNumber>
-                  <CommonText>게시물</CommonText>
+                  <CommonText>Post</CommonText>
                 </PostContainer>
                 <FollowerContainer onPress={handleNavigateToFollowersScreen}>
                   <CommonNumber>{meData?.me.followersCount ?? 0}</CommonNumber>
-                  <CommonText>팔로워</CommonText>
+                  <CommonText>Follower</CommonText>
                 </FollowerContainer>
                 <FollowingContainer onPress={handleNavigateToFollowingScreen}>
                   <CommonNumber>{meData?.me.followingCount ?? 0}</CommonNumber>
-                  <CommonText>팔로잉</CommonText>
+                  <CommonText>Following</CommonText>
                 </FollowingContainer>
               </UserInfoContainer>
             </UserContainer>
@@ -338,7 +338,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                 {/*{route.params?.isMe === true ? (*/}
                 {isMe === true ? (
                   <LeftActionButton onPress={handleNavigateToEditProfileScreen}>
-                    <LeftActionButtonText>프로필 수정</LeftActionButtonText>
+                    <LeftActionButtonText>Edit Profile</LeftActionButtonText>
                   </LeftActionButton>
                 ) : (
                   <LeftActionButton
@@ -364,7 +364,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                 {/*{route.params?.isMe === true ? (*/}
                 {isMe === true ? (
                   <RightAction onPress={logUserOut}>
-                    <RightActionText>로그아웃</RightActionText>
+                    <RightActionText>Logout</RightActionText>
                   </RightAction>
                 ) : (
                   <RightAction onPress={handleNavigateToStackRoomsNavigation}>

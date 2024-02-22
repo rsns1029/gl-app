@@ -104,19 +104,19 @@ const ProfileBody: React.FC<ProfileBodyProps> = ({
           <Text style={{fontWeight: 'bold', fontSize: 18, color: 'white'}}>
             {post}
           </Text>
-          <Text style={{color: 'white'}}>게시물</Text>
+          <Text style={{color: 'white'}}>Post</Text>
         </View>
         <View style={{alignItems: 'center'}}>
           <Text style={{fontWeight: 'bold', fontSize: 18, color: 'white'}}>
             {followers}
           </Text>
-          <Text style={{color: 'white'}}>팔로워</Text>
+          <Text style={{color: 'white'}}>Follower</Text>
         </View>
         <View style={{alignItems: 'center'}}>
           <Text style={{fontWeight: 'bold', fontSize: 18, color: 'white'}}>
             {following}
           </Text>
-          <Text style={{color: 'white'}}>팔로잉</Text>
+          <Text style={{color: 'white'}}>Following</Text>
         </View>
       </View>
     </View>
