@@ -55,8 +55,8 @@ export default function MapScreen() {
     <View style={{flex: 1}}>
       {location && (
         <RealTimeMap
-          latitude={location.latitude}
-          longitude={location.longitude}
+          initialLatitude={location.latitude}
+          initialLongitude={location.longitude}
         />
       )}
     </View>

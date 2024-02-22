@@ -17,8 +17,15 @@ import useMe from '../../hooks/useMe.tsx';
 import MapScreenLayout from './MapScreenLayOut.tsx';
 import {LOCATION_FRAGMENT} from '../../fragments.tsx';
 import gql from 'graphql-tag';
+import Geolocation from '@react-native-community/geolocation';
+import {PermissionsAndroid} from 'react-native';
 
 interface RealTimeMapProps {
+  initialLatitude: number;
+  initialLongitude: number;
+}
+
+interface RealTimeLocationCoords {
   latitude: number;
   longitude: number;
 }
@@ -42,13 +49,19 @@ const SEE_LOCATIONS_QUERY = gql`
   ${LOCATION_FRAGMENT}
 `;
 
-export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
+export default function RealTimeMap({
+  initialLatitude,
+  initialLongitude,
+}: RealTimeMapProps) {
   const client: ApolloClient<Object> = useApolloClient();
   const [subscribed, setSubscribed] = useState(false);
-  const {data: meData} = useMe();
-  console.log('meData : ', meData);
+  const [realTimeLocation, setRealTimeLocation] =
+    useState<RealTimeLocationCoords>({
+      latitude: initialLatitude,
+      longitude: initialLongitude,
+    });
 
-  console.log(latitude, longitude);
+  const {data: meData} = useMe();
 
   // const {
   //   data: realTimeData,
@@ -66,36 +79,36 @@ export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
     loading: initialLoading,
     subscribeToMore,
   } = useQuery<LocationDataProps>(SEE_LOCATIONS_QUERY, {
-    variables: {lat: latitude, lon: longitude},
+    variables: {lat: initialLatitude, lon: initialLongitude},
     fetchPolicy: 'network-only',
   });
 
   const initialRegion: Region = {
-    latitude: latitude || 0,
-    longitude: longitude || 0,
+    latitude: initialLatitude || 0,
+    longitude: initialLongitude || 0,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   };
 
-  useEffect(() => {
-    if (locationData) {
-      console.log('locationData from here:', locationData);
-      client.writeQuery({
-        query: SEE_LOCATIONS_QUERY,
-        data: locationData,
-        variables: {lat: latitude, lon: longitude},
-      });
-    }
-  }, [locationData, latitude, longitude, client]);
+  // useEffect(() => {
+  //   if (locationData) {
+  //     console.log('locationData from here:', locationData);
+  //     client.writeQuery({
+  //       query: SEE_LOCATIONS_QUERY,
+  //       data: locationData,
+  //       variables: {lat: initialLatitude, lon: initialLongitude},
+  //     });
+  //   }
+  // }, [locationData, initialLatitude, initialLongitude, client]);
 
   useEffect(() => {
     if (locationData && !subscribed) {
-      console.log('subscribed to more');
+      console.log('subscribed to more!!!!!!!!!!!!!!!!!!!');
       subscribeToMore({
         document: MAP_UPDATES,
         variables: {
-          generalLat: latitude,
-          generalLon: longitude,
+          generalLat: initialLatitude,
+          generalLon: initialLongitude,
         },
         updateQuery: (prevQuery: SelectLocationsQuery, options: any): any => {
           // console.log('update Query : ', options);
@@ -138,8 +151,56 @@ export default function RealTimeMap({latitude, longitude}: RealTimeMapProps) {
         },
       });
       setSubscribed(true);
+    } else {
+      console.log('Already Subscribed !!!!!!!!!!!!!!!!!!');
     }
   }, [locationData, subscribed]);
+
+  useEffect(() => {
+    console.log('Starting Real Time Map@@@@@@@@');
+
+    let watchId: number | null = null;
+    const watchRealTime = async () => {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      ]);
+      watchId = Geolocation.watchPosition(
+        position => {
+          setRealTimeLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        error => {
+          console.error('Error getting location:', error);
+        },
+        {enableHighAccuracy: true, distanceFilter: 0},
+      );
+    };
+    watchRealTime();
+    return () => {
+      if (watchId !== null) {
+        Geolocation.clearWatch(watchId);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('realTimeLocation : ', realTimeLocation);
+  }, [realTimeLocation]);
+
+  useEffect(() => {
+    if (initialLoading) {
+      console.log('Fetching near by users');
+    }
+  }, [initialLoading]);
+
+  useEffect(() => {
+    console.log('Initiate');
+    // 캐쉬 전부 삭제
+    //
+  }, [initialLatitude, initialLongitude]);
 
   return (
     <MapScreenLayout loading={initialLoading}>
