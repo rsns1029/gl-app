@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import MapView, {Marker, Region} from 'react-native-maps';
 import {customMapStyle} from '../../styles/mapStyle.ts';
 import {
+  ApolloCache,
   ApolloClient,
+  FetchResult,
   useApolloClient,
   useQuery,
   useSubscription,
@@ -11,7 +13,9 @@ import {MAP_UPDATES} from '../../documents/subscriptions/mapUpdates.subscription
 import {
   Location,
   SelectLocationsQuery,
+  UpdateLocationMutation,
   useSelectLocationsQuery,
+  useUpdateLocationMutation,
 } from '../../generated/graphql.ts';
 import useMe from '../../hooks/useMe.tsx';
 import MapScreenLayout from './MapScreenLayOut.tsx';
@@ -53,13 +57,30 @@ export default function RealTimeMap({
   initialLatitude,
   initialLongitude,
 }: RealTimeMapProps) {
+  const checkingDigits: number = 4;
+  const rerenderThreshHold: number = 0.03;
   const client: ApolloClient<Object> = useApolloClient();
+
   const [subscribed, setSubscribed] = useState(false);
+
+  const parse = (num: number): number => {
+    return parseFloat(num.toFixed(checkingDigits));
+  };
+
   const [realTimeLocation, setRealTimeLocation] =
     useState<RealTimeLocationCoords>({
-      latitude: initialLatitude,
-      longitude: initialLongitude,
+      latitude: parse(initialLatitude),
+      longitude: parse(initialLongitude),
     });
+
+  const [lastSelectPoint, setLastSelectPoint] =
+    useState<RealTimeLocationCoords>({
+      latitude: parse(initialLatitude),
+      longitude: parse(initialLongitude),
+    });
+
+  const realTimeLocationRef = useRef(realTimeLocation);
+  realTimeLocationRef.current = realTimeLocation;
 
   const {data: meData} = useMe();
 
@@ -77,9 +98,13 @@ export default function RealTimeMap({
   const {
     data: locationData,
     loading: initialLoading,
+    refetch,
     subscribeToMore,
   } = useQuery<LocationDataProps>(SEE_LOCATIONS_QUERY, {
-    variables: {lat: initialLatitude, lon: initialLongitude},
+    variables: {
+      lat: parse(initialLatitude),
+      lon: parse(initialLongitude),
+    },
     fetchPolicy: 'network-only',
   });
 
@@ -100,6 +125,15 @@ export default function RealTimeMap({
   //     });
   //   }
   // }, [locationData, initialLatitude, initialLongitude, client]);
+
+  const [updateLocationMutation, {loading: updatingLocation}] =
+    useUpdateLocationMutation({
+      onCompleted: (data: UpdateLocationMutation): void => {
+        // console.log('---------------');
+        // console.log(data);
+        // console.log('---------------');
+      },
+    });
 
   useEffect(() => {
     if (locationData && !subscribed) {
@@ -167,10 +201,29 @@ export default function RealTimeMap({
       ]);
       watchId = Geolocation.watchPosition(
         position => {
-          setRealTimeLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
+          const currentLocation = {
+            latitude: parse(position.coords.latitude),
+            longitude: parse(position.coords.longitude),
+          };
+          if (
+            currentLocation.latitude !== realTimeLocationRef.current.latitude ||
+            currentLocation.longitude !== realTimeLocationRef.current.longitude
+          ) {
+            console.log('setting Realtime');
+            console.log(
+              currentLocation.latitude +
+                ' vs ' +
+                realTimeLocationRef.current.latitude,
+            );
+            console.log(
+              currentLocation.longitude +
+                ' vs ' +
+                realTimeLocationRef.current.longitude,
+            );
+            setRealTimeLocation(currentLocation);
+          } else {
+            console.log('same RealTime~~~~~~~~~~r');
+          }
         },
         error => {
           console.error('Error getting location:', error);
@@ -187,7 +240,30 @@ export default function RealTimeMap({
   }, []);
 
   useEffect(() => {
-    console.log('realTimeLocation : ', realTimeLocation);
+    console.log('Updated realTimeLocation : ', realTimeLocation);
+    if (!updatingLocation) {
+      console.log('sending data');
+      updateLocationMutation({
+        variables: {
+          lat: realTimeLocation.latitude,
+          lon: realTimeLocation.longitude,
+        },
+      }).catch(error => console.log(error));
+      if (
+        Math.abs(realTimeLocation.latitude - lastSelectPoint.latitude) >
+          rerenderThreshHold ||
+        Math.abs(realTimeLocation.longitude - lastSelectPoint.longitude) >
+          rerenderThreshHold
+      ) {
+        console.log('moved too much -> selecting near by again');
+        refetch({
+          lat: realTimeLocation.latitude,
+          lon: realTimeLocation.longitude,
+        }).catch(error => console.log('error : ', error));
+      }
+    } else {
+      console.log('already sending');
+    }
   }, [realTimeLocation]);
 
   useEffect(() => {
@@ -210,13 +286,14 @@ export default function RealTimeMap({
         showsUserLocation={true}
         customMapStyle={customMapStyle}>
         {locationData &&
-          meData &&
+          meData?.id &&
           locationData.selectLocations &&
           locationData.selectLocations.locations &&
           locationData.selectLocations.locations.map(
             location =>
               location.lat &&
-              location.lon && (
+              location.lon &&
+              meData.id != location.userId && (
                 <Marker
                   key={location.userId} // userId가 키 -> apollo.tsx 에서 캐쉬 설정 필요
                   coordinate={{

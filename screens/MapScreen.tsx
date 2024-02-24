@@ -10,7 +10,9 @@ interface LocationCoords {
 }
 
 export default function MapScreen() {
-  const [location, setLocation] = useState<LocationCoords | null>(null);
+  const [initialLocation, setInitialLocation] = useState<LocationCoords | null>(
+    null,
+  );
   const [locationPermissionGranted, setLocationPermissionGranted] =
     useState(false);
 
@@ -32,7 +34,7 @@ export default function MapScreen() {
           Geolocation.getCurrentPosition(
             position => {
               console.log('Getting data');
-              setLocation({
+              setInitialLocation({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
               });
@@ -53,10 +55,10 @@ export default function MapScreen() {
 
   return (
     <View style={{flex: 1}}>
-      {location && (
+      {initialLocation && (
         <RealTimeMap
-          initialLatitude={location.latitude}
-          initialLongitude={location.longitude}
+          initialLatitude={initialLocation.latitude}
+          initialLongitude={initialLocation.longitude}
         />
       )}
     </View>

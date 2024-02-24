@@ -62,7 +62,7 @@ function App(): React.JSX.Element | null {
     // return error page here
     return null;
   }
-  apolloDevToolsInit(client); // apollo cache tool plugin. delete this later
+  // apolloDevToolsInit(client); // apollo cache tool plugin. delete this later
   return (
     <ApolloProvider client={client}>
       <ThemeProvider theme={colorMode === 'light' ? lightTheme : darkTheme}>
