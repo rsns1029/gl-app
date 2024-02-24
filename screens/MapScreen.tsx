@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {View, Platform, PermissionsAndroid} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import {PermissionsAndroid} from 'react-native';
 import RealTimeMap from '../components/map/RealTimeMap.tsx';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 interface LocationCoords {
   latitude: number;
@@ -19,33 +19,37 @@ export default function MapScreen() {
   useEffect(() => {
     const requestLocationPermission = async () => {
       try {
-        const granted = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]);
-
-        if (
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
-            PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          setLocationPermissionGranted(true);
-          Geolocation.getCurrentPosition(
-            position => {
-              console.log('Getting data');
-              setInitialLocation({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              });
-            },
-            error => {
-              console.error('Error getting location:', error);
-            },
-          );
+        let granted;
+        if (Platform.OS === 'ios') {
+          granted = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
         } else {
-          console.warn('Location permission denied');
+          granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          ]);
         }
+        // if (
+        //   granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
+        //     PermissionsAndroid.RESULTS.GRANTED &&
+        //   granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
+        //     PermissionsAndroid.RESULTS.GRANTED
+        // ) {
+        setLocationPermissionGranted(true);
+        Geolocation.getCurrentPosition(
+          position => {
+            console.log('Getting data');
+            setInitialLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          error => {
+            console.error('Error getting location:', error);
+          },
+        );
+        // } else {
+        //   console.warn('Location permission denied');
+        // }
       } catch (err) {
         console.error('권한 오류:', err); // 구글 API 키 넣어야 함()
       }

@@ -22,7 +22,8 @@ import MapScreenLayout from './MapScreenLayOut.tsx';
 import {LOCATION_FRAGMENT} from '../../fragments.tsx';
 import gql from 'graphql-tag';
 import Geolocation from '@react-native-community/geolocation';
-import {PermissionsAndroid} from 'react-native';
+import {PermissionsAndroid, Platform} from 'react-native';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 interface RealTimeMapProps {
   initialLatitude: number;
@@ -57,10 +58,11 @@ export default function RealTimeMap({
   initialLatitude,
   initialLongitude,
 }: RealTimeMapProps) {
+  console.log(' initial : ', initialLongitude);
+
   const checkingDigits: number = 4;
   const rerenderThreshHold: number = 0.03;
   const client: ApolloClient<Object> = useApolloClient();
-
   const [subscribed, setSubscribed] = useState(false);
 
   const parse = (num: number): number => {
@@ -135,9 +137,25 @@ export default function RealTimeMap({
       },
     });
 
+  // const {
+  //   data: subscriptionData,
+  //   loading: subscriptionLoading,
+  //   error: subscriptionError,
+  // } = useSubscription(MAP_UPDATES, {
+  //   variables: {
+  //     generalLat: initialLatitude,
+  //     generalLon: 55,
+  //   },
+  // });
+
   useEffect(() => {
     if (locationData && !subscribed) {
-      console.log('subscribed to more!!!!!!!!!!!!!!!!!!!');
+      console.log(
+        'subscribed to more!!!!!!!!!!!!!!!!!!! ',
+        initialLatitude,
+        ' : ',
+        initialLongitude,
+      );
       subscribeToMore({
         document: MAP_UPDATES,
         variables: {
@@ -192,13 +210,18 @@ export default function RealTimeMap({
 
   useEffect(() => {
     console.log('Starting Real Time Map@@@@@@@@');
-
     let watchId: number | null = null;
     const watchRealTime = async () => {
-      await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-      ]);
+      console.log('watch started');
+      if (Platform.OS === 'ios') {
+        await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      } else {
+        await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        ]);
+      }
+
       watchId = Geolocation.watchPosition(
         position => {
           const currentLocation = {
