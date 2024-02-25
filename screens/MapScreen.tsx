@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import MapView, { Marker, Region } from "react-native-maps";
-import Geolocation from "@react-native-community/geolocation";
-import { PermissionsAndroid } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Platform, PermissionsAndroid} from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+import RealTimeMap from '../components/map/RealTimeMap.tsx';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 interface LocationCoords {
   latitude: number;
@@ -10,67 +10,61 @@ interface LocationCoords {
 }
 
 export default function MapScreen() {
-  const [location, setLocation] = useState<LocationCoords | null>(null);
+  const [initialLocation, setInitialLocation] = useState<LocationCoords | null>(
+    null,
+  );
+  const [locationPermissionGranted, setLocationPermissionGranted] =
+    useState(false);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
       try {
-        const granted = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]);
-
-        if (
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] === PermissionsAndroid.RESULTS.GRANTED &&
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] === PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          Geolocation.getCurrentPosition(
-            (position) => {
-              setLocation({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              });
-            },
-            (error) => {
-              console.error("Error getting location:", error);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-          );
+        let granted;
+        if (Platform.OS === 'ios') {
+          granted = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
         } else {
-          console.warn('Location permission denied');
+          granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          ]);
         }
+        // if (
+        //   granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
+        //     PermissionsAndroid.RESULTS.GRANTED &&
+        //   granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
+        //     PermissionsAndroid.RESULTS.GRANTED
+        // ) {
+        setLocationPermissionGranted(true);
+        Geolocation.getCurrentPosition(
+          position => {
+            console.log('Getting data');
+            setInitialLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          error => {
+            console.error('Error getting location:', error);
+          },
+        );
+        // } else {
+        //   console.warn('Location permission denied');
+        // }
       } catch (err) {
         console.error('권한 오류:', err); // 구글 API 키 넣어야 함()
       }
     };
-
     requestLocationPermission();
   }, []);
 
-  const initialRegion: Region = {
-    latitude: location ? location.latitude : 0,
-    longitude: location ? location.longitude : 0,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  };
-
   return (
-    <View style={{ flex: 1 }}>
-      <MapView
-        style={{ flex: 1 }}
-        region={initialRegion}
-        showsUserLocation={true}
-      >
-        {location && (
-          <Marker
-            coordinate={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-            }}
-            title="You are here"
-          />
-        )}
-      </MapView>
+    <View style={{flex: 1}}>
+      {initialLocation && (
+        <RealTimeMap
+          initialLatitude={initialLocation.latitude}
+          initialLongitude={initialLocation.longitude}
+        />
+      )}
     </View>
   );
 }

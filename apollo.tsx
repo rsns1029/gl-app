@@ -14,6 +14,7 @@ import {createClient} from 'graphql-ws';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {FragmentDefinitionNode, OperationDefinitionNode} from 'graphql';
+import {LocationRoom} from './generated/graphql.ts';
 
 export const isLoggedInVar = makeVar<boolean>(false);
 export const tokenVar = makeVar<string | null>(null);
@@ -89,6 +90,9 @@ export const cache = new InMemoryCache({
     },
     User: {
       keyFields: ['id'], // Ensure User objects have an ID
+    },
+    Location: {
+      keyFields: ['userId'],
     },
   },
 });

@@ -4,6 +4,8 @@ export const lightTheme: DefaultTheme = {
   bgColor: 'white',
   fontColor: 'rgb(38, 38, 38)',
   placeHolderFontColor: 'rgba(38, 38, 38, 0.6)',
+  googleLoginColor: 'blue',
+  separatorLineColor: 'rgba(38, 38, 38, 0.2)',
 };
 
 export const darkTheme: DefaultTheme = {
@@ -13,4 +15,6 @@ export const darkTheme: DefaultTheme = {
   activeColor: '#0095F6',
   bgContainerColor: '#3C3C3C',
   borderColor: 'white',
+  googleLoginColor: 'blue',
+  separatorLineColor: 'rgba(255, 255, 255, 0.2)',
 };

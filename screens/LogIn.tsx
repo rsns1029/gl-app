@@ -1,5 +1,5 @@
 import {gql, useMutation} from '@apollo/client';
-import React, {MutableRefObject, useEffect, useRef} from 'react';
+import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import AuthLayout from '../components/auth/AuthLayout';
 import {TextInput} from '../components/auth/AuthShared';
 import {useForm} from 'react-hook-form';
@@ -7,6 +7,7 @@ import AuthButton from '../components/auth/AuthButton';
 import {logUserIn} from '../apollo';
 import {RootStackParamList} from '../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import ErrorMessage from '../components/text/ErrorMessage';
 
 type LoginNavigationProps = NativeStackScreenProps<
   RootStackParamList,
@@ -29,6 +30,7 @@ const LOGIN_MUTATION = gql`
 `;
 
 const Login = ({route}: LoginNavigationProps) => {
+  const [errorMsg, setErrorMsg] = useState('');
   const passwordRef: MutableRefObject<null> = useRef(null);
   const {register, handleSubmit, setValue, watch} = useForm<LoginFormData>({
     defaultValues: {
@@ -44,12 +46,16 @@ const Login = ({route}: LoginNavigationProps) => {
     console.log('ok : ', ok);
     console.log('token : ', token);
     console.log('error : ', error);
+    if (error) {
+      setErrorMsg(error);
+    }
     if (ok) {
       await logUserIn(token);
     }
   };
 
   const onValid = (data: any) => {
+    setErrorMsg('');
     if (!loading) {
       logInMutation({
         variables: {
@@ -59,7 +65,6 @@ const Login = ({route}: LoginNavigationProps) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [logInMutation, {loading, error}] = useMutation(LOGIN_MUTATION, {
     onCompleted,
   });
@@ -103,6 +108,7 @@ const Login = ({route}: LoginNavigationProps) => {
         disabled={!watch('username') || !watch('password')}
         onPress={handleSubmit(onValid)}
       />
+      {errorMsg && <ErrorMessage>{errorMsg}</ErrorMessage>}
     </AuthLayout>
   );
 };

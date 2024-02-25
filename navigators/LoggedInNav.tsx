@@ -4,8 +4,9 @@ import MessagesNav from './MessagesNav';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTheme} from 'styled-components';
 import ProfileStackNav from './ProfileStackNav';
+import {RootStackParamList} from '../shared/shared.types.ts';
 
-const Nav = createStackNavigator();
+const Nav = createStackNavigator<RootStackParamList>();
 
 export default function LoggedInNav() {
   const theme = useTheme();

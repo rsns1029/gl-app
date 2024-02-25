@@ -79,6 +79,7 @@ export interface EditProfileProps {
   name: string;
   accountName: string;
   profileImage: any;
+  color?: string;
 }
 
 const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {

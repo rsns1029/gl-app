@@ -20,3 +20,11 @@ export const MATCH_FRAGMENT = gql`
     userStatus
   }
 `;
+
+export const LOCATION_FRAGMENT = gql`
+  fragment LocationParts on Location {
+    userId
+    lat
+    lon
+  }
+`;

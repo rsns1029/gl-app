@@ -6,5 +6,7 @@ declare module 'styled-components' {
     bgColor: string;
     fontColor: string;
     placeHolderFontColor: string;
+    googleLoginColor: string;
+    separatorLineColor: string;
   }
 }

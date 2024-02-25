@@ -8,6 +8,8 @@ import {darkTheme, lightTheme} from './styles/themes.ts';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import LoggedInNav from './navigators/LoggedInNav.tsx';
 import LoggedOutNav from './navigators/LoggedOutNav.tsx';
+import {apolloDevToolsInit} from 'react-native-apollo-devtools-client';
+import {loadErrorMessages, loadDevMessages} from '@apollo/client/dev';
 
 function App(): React.JSX.Element | null {
   const [ready, setReady] = useState<boolean>(false);
@@ -16,6 +18,7 @@ function App(): React.JSX.Element | null {
 
   const preload = async (): Promise<boolean> => {
     const token = await AsyncStorage.getItem('token');
+    // await AsyncStorage.removeItem('token');
     if (token) {
       tokenVar(token);
       return true;
@@ -59,6 +62,14 @@ function App(): React.JSX.Element | null {
   if (!ready) {
     // return error page here
     return null;
+  }
+
+  if (__DEV__) {
+    // Adds messages only in a dev environment
+    console.log('dev env');
+    loadDevMessages();
+    loadErrorMessages();
+    // apolloDevToolsInit(client); // apollo cache tool plugin. delete this later
   }
 
   return (
