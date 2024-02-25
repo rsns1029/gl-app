@@ -234,13 +234,11 @@ export default function EachRoom({route, navigation}: RoomProps) {
         },
         updateQuery: (prevQuery: SeeRoomQuery, options: any): any => {
           console.log('updateQuery');
-
           const {
             subscriptionData: {
               data: {roomUpdates: message},
             },
           } = options;
-
           if (message.id) {
             const messageFragment = client.cache.writeFragment({
               fragment: NEW_MESSAGE_FRAGMENT,

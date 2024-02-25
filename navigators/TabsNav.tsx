@@ -39,14 +39,6 @@ export default function TabsNav() {
       <Tabs.Screen
         name="Map"
         component={MapScreen}
-        listeners={({navigation}) => {
-          return {
-            tabPress: e => {
-              e.preventDefault();
-              navigation.navigate('Map');
-            },
-          };
-        }}
         options={{
           tabBarIcon: ({focused, color}) => (
             <TabIcon
