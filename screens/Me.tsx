@@ -35,7 +35,7 @@ const Me = ({navigation}: MeNavigationProps) => {
       <Text style={{color: 'white'}}>Me</Text>
       <Button
         onPress={logUserOut}
-        text="로그아웃"
+        text="Logout"
         size="14px"
         bgFill={true}
         loading={false}
