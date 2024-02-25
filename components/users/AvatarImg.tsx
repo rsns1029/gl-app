@@ -23,9 +23,9 @@ const IconContainer = styled.View`
   align-items: center;
 `;
 
-export default function AvatarImg({avatarPath}: AvatarimgProps) {
+export default function AvatarImg({ avatarPath }: AvatarimgProps) {
   return avatarPath ? (
-    <AvatarImage source={{uri: avatarPath}} />
+    <AvatarImage source={{ uri: avatarPath }} />
   ) : (
     <IconContainer>
       <Icon name="person" size={32} color="#ffffff" />

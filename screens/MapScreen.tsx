@@ -1,8 +1,8 @@
 import React, { useEffect, useState, SetStateAction, Dispatch } from "react";
-import { Text, TouchableOpacity, View, StyleSheet, Image, FlatList, ActivityIndicator } from "react-native";
-import MapView, { Marker, Region } from "react-native-maps";
+import { Text, TouchableOpacity, View, StyleSheet, Image, FlatList, ActivityIndicator, Animated } from "react-native";
+import MapView, { Marker, Region, Circle, AnimatedRegion } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
-import { PermissionsAndroid } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 
 
 interface LocationCoords {
@@ -22,39 +22,49 @@ export default function MapScreen() {
   const [isLoading, setIsLoading] = useState<boolean>(false); // 추가 데이터 로딩 상태
   const [page, setPage] = useState<number>(1); // 현재 페이지
   const [totalPages, setTotalPages] = useState<number>(5); // 전체 페이지 수
+  const [sidebarAnimation] = useState(new Animated.Value(0)); // 사이드바 애니메이션 값
 
   useEffect(() => {
     const requestLocationPermission = async () => {
       try {
-        const granted = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]);
+        if (Platform.OS === 'android') {
+          const granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          ]);
 
-        if (
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
-          granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
-          PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          Geolocation.getCurrentPosition(
-            position => {
-              setLocation({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              });
-            },
-            error => {
-              console.error('Error getting location:', error);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-          );
-        } else {
-          console.warn('Location permission denied');
+          if (
+            granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+            granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] ===
+            PermissionsAndroid.RESULTS.GRANTED
+          ) {
+            getCurrentPosition();
+          } else {
+            console.warn('Location permission denied');
+          }
+        } else if (Platform.OS === 'ios') {
+          Geolocation.requestAuthorization();
+          getCurrentPosition();
         }
       } catch (err) {
-        console.error('권한 오류:', err); // 구글 API 추가 완료 => 이후에 API 키 숨기는 작업 필요
+        console.error('Permission error:', err);
       }
+    };
+
+    const getCurrentPosition = () => {
+      Geolocation.getCurrentPosition(
+        position => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        error => {
+          console.error('Error getting location:', error);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+      );
     };
 
     requestLocationPermission();
@@ -107,6 +117,34 @@ export default function MapScreen() {
 
   const customMapStyle = [
     {
+      featureType: 'poi',
+      elementType: 'labels',
+      stylers: [
+        { visibility: 'off' }, // 상호명 숨김
+      ],
+    },
+    {
+      featureType: 'road',
+      elementType: 'labels.icon',
+      stylers: [
+        { visibility: 'off' }, // 도로 아이콘 숨김
+      ],
+    },
+    {
+      featureType: 'transit',
+      elementType: 'labels',
+      stylers: [
+        { visibility: 'off' }, // 대중교통 숨김
+      ],
+    },
+    {
+      featureType: 'landscape',
+      elementType: 'labels',
+      stylers: [
+        { visibility: 'off' }, // 지형지물 상호명 숨김
+      ],
+    },
+    {
       elementType: 'geometry',
       stylers: [
         {
@@ -158,15 +196,26 @@ export default function MapScreen() {
         region={initialRegion}
         showsUserLocation={true}
         customMapStyle={customMapStyle} // 임의로 스타일 적용
+        zoomEnabled={false} // 확대/축소 기능 비활성화
       >
         {location && (
-          <Marker
-            coordinate={{
+          <Circle
+            center={{
               latitude: location.latitude,
               longitude: location.longitude,
             }}
-            title="You are here"
+            radius={50} // 반지름 설정 (원의 크기)
+            fillColor="rgba(0, 0, 255, 0.5)" // 채우기 색상 설정 (파란색의 반투명)
+            strokeColor="rgba(0, 0, 255, 0.5)" // 테두리 색상 설정 (파란색의 반투명)
           />
+          // <Marker
+          //   coordinate={{
+          //     latitude: location.latitude,
+          //     longitude: location.longitude,
+          //   }}
+          //   title="You are here"
+          //   pinColor="blue" // 파란색으로 마커 표현
+          // />
         )}
       </MapView>
       {isSidebarOpen && (
@@ -178,7 +227,7 @@ export default function MapScreen() {
               <TouchableOpacity style={styles.sidebarItem}>
                 <Image
                   source={{ uri: item.url }}
-                  style={{ width: 100, height: 100 }}
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
                 />
               </TouchableOpacity>
             )}
