@@ -15,11 +15,14 @@ export type RootStackParamList = {
   StepTwo: any;
   StepThree: any;
   Rooms: any;
-  EditProfile: EditProfileProps;
-  ProfileStackScreen: undefined;
   MyProfile: undefined;
   Map: undefined;
   Matches: undefined;
+  StackProfileNavigation: any;
+  StackFollowers: any;
+  StackFollowing: any;
+  StackProfile: any;
+  StackEditProfile: any;
   StackMessagesNav: undefined;
 };
 

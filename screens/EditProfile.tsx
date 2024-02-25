@@ -3,11 +3,11 @@ import {Text} from 'react-native';
 import styled from 'styled-components/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../shared/shared.types.ts';
+import useMe from '../hooks/useMe';
 
 const Container = styled.SafeAreaView`
   flex: 1;
   width: 100%;
-  background-color: white;
 `;
 
 const Header = styled.View`
@@ -23,6 +23,7 @@ const CancelButton = styled.TouchableOpacity``;
 const Title = styled.Text`
   font-size: 16px;
   font-weight: bold;
+  color: ${props => props.theme.fontColor};
 `;
 
 const CompleteButton = styled.TouchableOpacity``;
@@ -40,8 +41,10 @@ const ProfileImage = styled.Image`
 `;
 
 const ProfileImageText = styled.Text`
-  color: white;
+  color: ${props => props.theme.activeColor};
   margin-top: 10px;
+  font-size: 14px;
+  font-weight: 400px;
 `;
 
 const InputContainer = styled.View`
@@ -49,7 +52,8 @@ const InputContainer = styled.View`
 `;
 
 const InputLabel = styled.Text`
-  opacity: 0.5;
+  color: ${props => props.theme.fontColor};
+  font-size: 14px;
 `;
 
 const TextInputStyled = styled.TextInput`
@@ -69,9 +73,14 @@ const ActionText = styled.Text`
   color: #3493d9;
 `;
 
+const CompleteButtonText = styled.Text`
+  color: ${props => props.theme.fontColor};
+  font-size: 14px;
+`;
+
 type EditProfileNavigationProps = NativeStackScreenProps<
   RootStackParamList,
-  'EditProfile'
+  'StackEditProfile'
 >;
 
 export interface EditProfileProps {
@@ -84,26 +93,30 @@ export interface EditProfileProps {
 const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {
   const {name, accountName, profileImage} = route.params;
 
+  const {data: meData} = useMe();
+
   return (
     <Container>
       <Header>
         <CancelButton onPress={() => navigation.goBack()}>
-          <Text>취소</Text>
+          <Text />
         </CancelButton>
-        <Title>프로필 수정</Title>
         <CompleteButton onPress={() => navigation.goBack()}>
-          <Text style={{color: '#3493D9'}}>완료</Text>
+          <CompleteButtonText>완료</CompleteButtonText>
         </CompleteButton>
       </Header>
-
       <ProfileImageContainer>
-        <ProfileImage source={profileImage} />
-        <ProfileImageText>프로필 사진 바꾸기</ProfileImageText>
+        {meData?.me.avatar ? (
+          <ProfileImage source={{uri: meData.me.avatar}} />
+        ) : (
+          <ProfileImage source={profileImage} />
+        )}
+        <ProfileImageText>Edit Avatar</ProfileImageText>
       </ProfileImageContainer>
 
       <InputContainer>
-        <InputLabel>이름</InputLabel>
-        <TextInputStyled placeholder="이름" defaultValue={name} />
+        <InputLabel>Name</InputLabel>
+        <TextInputStyled placeholder="name" defaultValue={name} />
       </InputContainer>
 
       <InputContainer>

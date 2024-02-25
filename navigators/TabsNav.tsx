@@ -72,8 +72,16 @@ export default function TabsNav() {
         }}
       />
       <Tabs.Screen
-        name="ProfileStackScreen"
+        name="StackProfileNavigation"
         component={ProfileStackNav}
+        listeners={({navigation}) => ({
+          tabPress: event => {
+            // Prevent the default action (which would be opening the EmptyScreen)
+            event.preventDefault();
+            // Navigate to the desired screen instead
+            navigation.navigate('StackProfileNavigation');
+          },
+        })}
         options={{
           tabBarIcon: ({focused, color}) => (
             <TabIcon
