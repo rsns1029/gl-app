@@ -1,5 +1,5 @@
 overwrite: true
-schema: "http://localhost:4000/graphql"
+schema: "https://green-light-backend-04c79b6adf93.herokuapp.com/graphql"
 documents: "./documents/**/*.ts"
 generates:
   ./generated/graphql.ts:
