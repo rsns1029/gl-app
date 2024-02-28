@@ -309,14 +309,12 @@ export default function RealTimeMap({
         showsUserLocation={true}
         customMapStyle={customMapStyle}>
         {locationData &&
-          meData?.id &&
           locationData.selectLocations &&
           locationData.selectLocations.locations &&
-          locationData.selectLocations.locations.map(
-            location =>
-              location.lat &&
-              location.lon &&
-              meData.id != location.userId && (
+          locationData.selectLocations.locations.map(location => {
+            console.log('location @@@@@@@@@: ', location);
+            if (location.lat && location.lon) {
+              return (
                 <Marker
                   key={location.userId} // userId가 키 -> apollo.tsx 에서 캐쉬 설정 필요
                   coordinate={{
@@ -325,8 +323,9 @@ export default function RealTimeMap({
                   }}
                   title={`User ID: ${location.userId}`}
                 />
-              ),
-          )}
+              );
+            }
+          })}
       </MapView>
     </MapScreenLayout>
   );

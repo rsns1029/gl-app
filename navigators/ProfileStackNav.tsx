@@ -1,29 +1,42 @@
-import React from 'react';
-import Profile from '../screens/Profile.tsx';
-import {colors} from '../colors.ts';
-import EditProfile from '../screens/EditProfile.tsx';
+import {colorModeVar} from '../apollo';
+import {useReactiveVar} from '@apollo/client';
 import {createStackNavigator} from '@react-navigation/stack';
-import {RootStackParamList} from '../shared/shared.types.ts';
+import Profile from '../screens/Profile';
+import Followers from '../screens/Followers.tsx';
+import Following from '../screens/Following.tsx';
+import EditProfile from '../screens/EditProfile';
 
-const ProfileStack = createStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator();
 
-const ProfileStackNav: React.FC = () => {
+const ProfileStackNav = () => {
+  const isDarkMode: 'light' | 'dark' = useReactiveVar(colorModeVar);
+
   return (
-    <ProfileStack.Navigator>
-      <ProfileStack.Screen
-        name="MyProfile"
-        component={Profile}
-        options={{
-          headerShown: true,
-          cardStyle: {backgroundColor: 'black'},
-          headerTintColor: 'grey',
-          headerStyle: {
-            backgroundColor: colors.green,
-          },
-        }}
+    <Stack.Navigator
+      screenOptions={{
+        headerBackTitleVisible: false,
+        headerStyle: {
+          backgroundColor: isDarkMode === 'light' ? 'white' : 'black',
+        },
+        headerTintColor: isDarkMode === 'light' ? 'black' : 'white',
+      }}>
+      <Stack.Screen name="StackProfile" component={Profile} />
+      <Stack.Screen
+        name="StackFollowers"
+        component={Followers}
+        options={{headerTitle: 'Follower'}}
       />
-      <ProfileStack.Screen name="EditProfile" component={EditProfile} />
-    </ProfileStack.Navigator>
+      <Stack.Screen
+        name="StackFollowing"
+        component={Following}
+        options={{headerTitle: 'Following'}}
+      />
+      <Stack.Screen
+        name="StackEditProfile"
+        component={EditProfile}
+        options={{headerTitle: 'Edit Profile'}}
+      />
+    </Stack.Navigator>
   );
 };
 
