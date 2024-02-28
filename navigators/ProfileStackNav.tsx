@@ -20,7 +20,7 @@ const ProfileStackNav = () => {
         },
         headerTintColor: isDarkMode === 'light' ? 'black' : 'white',
       }}>
-      <Stack.Screen name="StackProfile" component={Profile} />
+      <Stack.Screen name="My Profile" component={Profile} />
       <Stack.Screen
         name="StackFollowers"
         component={Followers}

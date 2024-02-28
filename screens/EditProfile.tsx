@@ -57,6 +57,7 @@ const InputLabel = styled.Text`
 `;
 
 const TextInputStyled = styled.TextInput`
+  color: ${props => props.theme.fontColor};
   font-size: 16px;
   border-bottom-width: 1px;
   border-color: #cdcdcd;
@@ -69,8 +70,8 @@ const ActionsContainer = styled.View`
 
 const ActionText = styled.Text`
   margin-vertical: 5px;
-  padding: 10px;
   color: #3493d9;
+  font-weight: 400px;
 `;
 
 const CompleteButtonText = styled.Text`
@@ -91,7 +92,6 @@ export interface EditProfileProps {
 }
 
 const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {
-  const {name, accountName, profileImage} = route.params;
 
   const {data: meData} = useMe();
 
@@ -109,29 +109,29 @@ const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {
         {meData?.me.avatar ? (
           <ProfileImage source={{uri: meData.me.avatar}} />
         ) : (
-          <ProfileImage source={profileImage} />
+          <ProfileImage source={require('../assets/basic_user.jpeg')} />
         )}
         <ProfileImageText>Edit Avatar</ProfileImageText>
       </ProfileImageContainer>
 
       <InputContainer>
-        <InputLabel>Name</InputLabel>
-        <TextInputStyled placeholder="name" defaultValue={name} />
+        <InputLabel>username</InputLabel>
+        <TextInputStyled placeholder="name" defaultValue={meData?.me.username} />
       </InputContainer>
 
       <InputContainer>
-        <InputLabel>사용자 이름</InputLabel>
-        <TextInputStyled placeholder="사용자 이름" defaultValue={accountName} />
+        <InputLabel>email</InputLabel>
+        <TextInputStyled placeholder="email" defaultValue={meData?.me.email} />
       </InputContainer>
 
       <InputContainer>
-        <InputLabel>웹사이트</InputLabel>
-        <TextInputStyled placeholder="웹사이트" />
+        <InputLabel>Instagram Username</InputLabel>
+        <TextInputStyled placeholder="Instagram Username" />
       </InputContainer>
 
       <InputContainer>
-        <InputLabel>소개</InputLabel>
-        <TextInputStyled placeholder="소개" />
+        <InputLabel>Self-Introduction</InputLabel>
+        <TextInputStyled placeholder="Self-Introduction" />
       </InputContainer>
 
       <ActionsContainer>
