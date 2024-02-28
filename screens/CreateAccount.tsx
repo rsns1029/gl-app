@@ -26,7 +26,10 @@ export default function CreateAccount({navigation}: CreateAccountProps) {
 
   const signOut = async () => {
     try {
-      await GoogleSignin.signOut();
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      if (isSignedIn) {
+        await GoogleSignin.signOut();
+      }
       await auth().signOut();
       navigation.navigate('Welcome');
     } catch (error) {
