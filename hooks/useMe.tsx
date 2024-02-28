@@ -10,6 +10,7 @@ const ME_QUERY = gql`
       followingCount
       followersCount
       avatar
+      email
     }
   }
 `;
