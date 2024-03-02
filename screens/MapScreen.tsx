@@ -1,12 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {View, Platform, PermissionsAndroid} from 'react-native';
+import {
+  View,
+  Platform,
+  PermissionsAndroid,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import RealTimeMap from '../components/map/RealTimeMap.tsx';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import SideBar from '../components/map/SideBar.tsx';
+import {styles as SideBarStyles} from '../components/map/SideBar.tsx';
 
 interface LocationCoords {
   latitude: number;
   longitude: number;
+}
+
+interface PhotoData {
+  id: number;
+  url: string;
 }
 
 export default function MapScreen() {
@@ -15,6 +29,12 @@ export default function MapScreen() {
   );
   const [locationPermissionGranted, setLocationPermissionGranted] =
     useState(false);
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false); //  사이드바
+  const [photos, setPhotos] = useState<PhotoData[]>([]); // 추가 데이터
+  const [isLoading, setIsLoading] = useState<boolean>(false); // 추가 데이터 로딩 상태
+  const [page, setPage] = useState<number>(1); // 현재 페이지
+  const [totalPages, setTotalPages] = useState<number>(5); // 전체 페이지 수
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -55,7 +75,45 @@ export default function MapScreen() {
       }
     };
     requestLocationPermission();
+    fetchPhotos(); // 초기 데이터 가져오기
   }, []);
+
+  // 추가 데이터 가져오기 함수
+  const fetchPhotos = () => {
+    if (page <= totalPages) {
+      setIsLoading(true);
+      // Simulating fetch data delay
+      setTimeout(() => {
+        const newPhotos = Array.from({length: 10}, (_, index) => ({
+          id: (page - 1) * 10 + index + 1,
+          url: `https://via.placeholder.com/300/${Math.floor(
+            Math.random() * 16777215,
+          ).toString(16)}/FFFFFF?text=Photo ${page * 10 + index + 1}`,
+        }));
+        setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
+        setIsLoading(false);
+        setPage(prevPage => prevPage + 1);
+      }, 1000);
+    }
+  };
+
+  // 스크롤 끝에 도달했을 때 추가 데이터 로드
+  const handleEndReached = () => {
+    if (!isLoading) {
+      fetchPhotos();
+    }
+  };
+
+  // 사이드바 작업
+  const openSidebar = () => {
+    setIsSidebarOpen(true);
+    fetchPhotos(); // 사이드바 열릴 때 데이터 가져오도록 호출
+  };
+
+  // 사이드바 닫기
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -64,6 +122,21 @@ export default function MapScreen() {
           initialLatitude={initialLocation.latitude}
           initialLongitude={initialLocation.longitude}
         />
+      )}
+      {isSidebarOpen && (
+        <SideBar
+          photos={photos}
+          isLoading={isLoading}
+          onClose={closeSidebar}
+          onEndReached={handleEndReached}
+        />
+      )}
+      {!isSidebarOpen && (
+        <TouchableOpacity
+          onPress={openSidebar}
+          style={SideBarStyles.sidebarButton}>
+          <Text style={SideBarStyles.sidebarButtonText}>{'<'}</Text>
+        </TouchableOpacity>
       )}
     </View>
   );
