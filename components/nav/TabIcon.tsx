@@ -3,7 +3,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface TabIconProps {
-  iconName: 'link' | 'heart' | 'map' | 'person' | 'chatbox-ellipses';
+  iconName: 'link' | 'heart' | 'map' | 'person' | 'camera' | 'chatbox-ellipses';
   color: string;
   focused: boolean;
 }

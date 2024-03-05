@@ -6,6 +6,7 @@ import {useTheme} from 'styled-components';
 import MapScreen from '../screens/MapScreen';
 import {RootStackParamList} from '../shared/shared.types.ts';
 import ProfileStackNav from './ProfileStackNav.tsx';
+import Search from '../screens/Search';
 
 const Tabs = createBottomTabNavigator<RootStackParamList>();
 
@@ -49,6 +50,26 @@ export default function TabsNav() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="TabCamera"
+        component={Search}
+        listeners={({navigation, route}) => ({
+          tabPress: event => {
+            event.preventDefault();
+            navigation.navigate('StackPhotoNavigation');
+          },
+        })}
+        options={{
+          tabBarIcon: ({focused, color}) => (
+            <TabIcon
+              iconName={'camera'}
+              color={theme.fontColor}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="Chats"
         component={EmptyScreen}

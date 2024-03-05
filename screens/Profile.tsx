@@ -7,18 +7,10 @@ import {FlatList, useWindowDimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useSeeProfileQuery} from '../generated/graphql';
 import useMe from '../hooks/useMe.tsx';
-import {useQuery, gql} from '@apollo/client';
-
-// import {
-//   //useFollowUserMutation,
-//   useSeeProfileQuery,
-//   useSeeProfileQuery,
-//   //useUnfollowUserMutation,
-// } from '../generated/graphql';
 
 type ProfileNavigationProps = NativeStackScreenProps<
   RootStackParamList,
-  'StackProfile'
+  'MyProfile'
 >;
 
 const Container = styled.View`
@@ -165,12 +157,6 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
 
   const {data: meData} = useMe();
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: meData?.me.username, // 변경할 헤더 타이틀
-    });
-  }, []);
-
   const {data} = useSeeProfileQuery({
     variables: {
       seeProfileId: meData?.me.id, // 프로필 ID를 변수로 전달합니다.
@@ -202,75 +188,6 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
       following: data?.seeProfile?.following,
     });
   };
-  // const {
-  //   data: seeProfileData,
-  //   loading: seeProfileLoading,
-  //   refetch,
-  // } = useSeeProfileQuery({variables: {username: route.params?.username}});
-
-  // const [followUserMutation, {loading: followUserLoading}] =
-  //   useFollowUserMutation({
-  //     update: (cache, {data}) => {
-  //       if (data?.followUser.ok === false) {
-  //         return;
-  //       }
-  //
-  //       // followUsername = data?.followUser.user?.username;
-  //       cache.modify({
-  //         id: `User:${data?.followUser.user?.id}`,
-  //         fields: {
-  //           isFollowing: (isFollowing: boolean) => true,
-  //           totalFollowers: (totalFollowers: number) => totalFollowers + 1,
-  //         },
-  //       });
-  //       cache.modify({
-  //         id: `User:${loggedInUser?.id}`,
-  //         fields: {
-  //           totalFollowing: (totalFollowing: number) => totalFollowing + 1,
-  //         },
-  //       });
-  //     },
-  //   });
-  // const [unfollowUserMutation, {loading: unfollowUserLoading}] =
-  //   useUnfollowUserMutation({
-  //     update: (cache, {data}) => {
-  //       if (data?.unfollowUser.ok === false) {
-  //         return;
-  //       }
-  //
-  //       // unfollowUsername = data?.unfollowUser.user?.username;
-  //       cache.modify({
-  //         id: `User:${data?.unfollowUser.user?.id}`,
-  //         fields: {
-  //           isFollowing: (isFollowing: boolean) => false,
-  //           totalFollowers: (totalFollowers: number) => totalFollowers - 1,
-  //         },
-  //       });
-  //       cache.modify({
-  //         id: `User:${loggedInUser?.id}`,
-  //         fields: {
-  //           totalFollowing: (totalFollowing: number) => totalFollowing - 1,
-  //         },
-  //       });
-  //     },
-  //   });
-
-  // const handleToggleFollow = (
-  //   isFollowing: boolean | undefined,
-  //   username: string | undefined,
-  // ): void => {
-  //   if (isFollowing === undefined || username === undefined) {
-  //     return;
-  //   }
-  //   if (followUserLoading === true || unfollowUserLoading === true) {
-  //     return;
-  //   }
-  //   if (isFollowing === false) {
-  //     followUserMutation({variables: {username}});
-  //   } else if (isFollowing === true) {
-  //     unfollowUserMutation({variables: {username}});
-  //   }
-  // };
 
   // const handleNavigateToStackRoomsNavigation = (): void => {
   //   navigation.navigate('StackRoomsNavigation');

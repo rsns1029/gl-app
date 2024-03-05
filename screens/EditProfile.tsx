@@ -44,7 +44,7 @@ const ProfileImageText = styled.Text`
   color: ${props => props.theme.activeColor};
   margin-top: 10px;
   font-size: 14px;
-  font-weight: 400px;
+  font-weight: 400;
 `;
 
 const InputContainer = styled.View`
@@ -71,7 +71,7 @@ const ActionsContainer = styled.View`
 const ActionText = styled.Text`
   margin-vertical: 5px;
   color: #3493d9;
-  font-weight: 400px;
+  font-weight: 400;
 `;
 
 const CompleteButtonText = styled.Text`
@@ -92,7 +92,6 @@ export interface EditProfileProps {
 }
 
 const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {
-
   const {data: meData} = useMe();
 
   return (
@@ -116,7 +115,10 @@ const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {
 
       <InputContainer>
         <InputLabel>username</InputLabel>
-        <TextInputStyled placeholder="name" defaultValue={meData?.me.username} />
+        <TextInputStyled
+          placeholder="name"
+          defaultValue={meData?.me.username}
+        />
       </InputContainer>
 
       <InputContainer>

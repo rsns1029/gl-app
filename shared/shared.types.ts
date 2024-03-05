@@ -15,7 +15,7 @@ export type RootStackParamList = {
   StepTwo: any;
   StepThree: any;
   Rooms: any;
-  MyProfile: undefined;
+  MyProfile: any;
   Map: undefined;
   Matches: undefined;
   StackProfileNavigation: any;
@@ -24,6 +24,9 @@ export type RootStackParamList = {
   StackProfile: any;
   StackEditProfile: any;
   StackMessagesNav: undefined;
+  StackPhotoNavigation: any;
+  StackSearch: any;
+  TabCamera: undefined;
 };
 
 export interface User {
