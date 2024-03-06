@@ -11,6 +11,10 @@ const ME_QUERY = gql`
       followersCount
       avatar
       email
+      photos {
+      id
+      file
+      }
     }
   }
 `;
