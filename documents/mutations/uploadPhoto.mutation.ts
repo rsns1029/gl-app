@@ -1,15 +1,15 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 gql`
-mutation UploadPhoto($ufile: Upload!) {
-  uploadPhoto(ufile: $ufile) {
-    id
-    file
-    user {
+  mutation UploadPhoto($ufile: Upload!) {
+    uploadPhoto(ufile: $ufile) {
       id
-      username
-      avatar
+      file
+      user {
+        id
+        username
+        avatar
+      }
     }
   }
-}
 `;

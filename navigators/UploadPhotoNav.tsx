@@ -6,11 +6,11 @@ import {useForm, Controller} from 'react-hook-form';
 import {ReactNativeFile} from 'apollo-upload-client';
 import {RootStackParamList} from '../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {useUploadPhotoMutation} from "../generated/graphql";
+import {useUploadPhotoMutation} from '../generated/graphql';
 
 type UploadPhotoNavigationProps = NativeStackScreenProps<
   RootStackParamList,
-  'StackPhotoNavigation'
+  'StackUploadPhotoNavigation'
 >;
 
 interface UploadPhotoFormData {
@@ -36,9 +36,8 @@ const CaptionContainer = styled.View`
 `;
 
 const CaptionTextInput = styled.TextInput`
-  background-color: ${props => props.theme.inputBgColor};
-  padding: 12px 20px;
-  padding-left: 10px;
+  background-color: ${props => props.theme.bgColor};
+  padding: 12px 20px 12px 10px;
   border-radius: 5px;
 `;
 
@@ -86,7 +85,7 @@ const UploadPhotoNav = ({navigation, route}: UploadPhotoNavigationProps) => {
       name: `${Date.now()}.jpg`,
       type: 'image/jpeg',
     });
-    uploadPhotoMutation({variables: {photo: file, caption: text}});
+    uploadPhotoMutation({variables: {ufile: file}});
   };
 
   useEffect(() => {

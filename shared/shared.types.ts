@@ -26,7 +26,10 @@ export type RootStackParamList = {
   StackMessagesNav: undefined;
   StackPhotoNavigation: any;
   StackSearch: any;
-  TabCamera: undefined;
+  StackPhoto: any;
+  TabSelectPhoto: any;
+  TabTakePhoto: any;
+  StackUploadPhotoNavigation: any;
 };
 
 export interface User {
