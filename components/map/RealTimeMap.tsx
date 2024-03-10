@@ -316,6 +316,7 @@ export default function RealTimeMap({
             if (location.lat && location.lon) {
               return (
                 <Circle
+                  key={location.userId}
                   center={{
                     latitude: location.lat,
                     longitude: location.lon,
