@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import MapView, {Marker, Region} from 'react-native-maps';
+import MapView, {Marker, Circle, Region} from 'react-native-maps';
 import {customMapStyle} from '../../styles/mapStyle.ts';
 import {
   ApolloCache,
@@ -315,6 +315,18 @@ export default function RealTimeMap({
             console.log('location @@@@@@@@@: ', location);
             if (location.lat && location.lon) {
               return (
+                <Circle
+                  center={{
+                    latitude: location.lat,
+                    longitude: location.lon,
+                  }}
+                  radius={35}
+                  strokeWidth={2}
+                  strokeColor="blue"
+                  fillColor="rgba(135, 206, 235, 0.5)" // 반투명한 하늘색으로 채우기
+                />
+              );
+              /*              return (
                 <Marker
                   key={location.userId} // userId가 키 -> apollo.tsx 에서 캐쉬 설정 필요
                   coordinate={{
@@ -323,7 +335,7 @@ export default function RealTimeMap({
                   }}
                   title={`User ID: ${location.userId}`}
                 />
-              );
+              );*/
             }
           })}
       </MapView>

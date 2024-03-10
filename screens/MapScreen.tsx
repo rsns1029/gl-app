@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {
   View,
   Platform,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  DrawerLayoutAndroid,
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import RealTimeMap from '../components/map/RealTimeMap.tsx';
@@ -104,40 +105,43 @@ export default function MapScreen() {
     }
   };
 
+  const drawerRef = useRef<DrawerLayoutAndroid>(null);
   // 사이드바 작업
   const openSidebar = () => {
-    setIsSidebarOpen(true);
-    fetchPhotos(); // 사이드바 열릴 때 데이터 가져오도록 호출
+    drawerRef.current?.openDrawer();
   };
 
   // 사이드바 닫기
   const closeSidebar = () => {
-    setIsSidebarOpen(false);
+    drawerRef.current?.closeDrawer();
   };
 
   return (
-    <View style={{flex: 1}}>
-      {initialLocation && (
-        <RealTimeMap
-          initialLatitude={initialLocation.latitude}
-          initialLongitude={initialLocation.longitude}
-        />
-      )}
-      {isSidebarOpen && (
+    <DrawerLayoutAndroid
+      ref={drawerRef}
+      drawerWidth={200}
+      drawerPosition={'right'}
+      renderNavigationView={() => (
         <SideBar
           photos={photos}
           isLoading={isLoading}
           onClose={closeSidebar}
           onEndReached={handleEndReached}
         />
-      )}
-      {!isSidebarOpen && (
+      )}>
+      <View style={{flex: 1}}>
+        {initialLocation && (
+          <RealTimeMap
+            initialLatitude={initialLocation.latitude}
+            initialLongitude={initialLocation.longitude}
+          />
+        )}
         <TouchableOpacity
           onPress={openSidebar}
           style={SideBarStyles.sidebarButton}>
           <Text style={SideBarStyles.sidebarButtonText}>{'<'}</Text>
         </TouchableOpacity>
-      )}
-    </View>
+      </View>
+    </DrawerLayoutAndroid>
   );
 }
