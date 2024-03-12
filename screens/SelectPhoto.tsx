@@ -1,11 +1,10 @@
 import styled from 'styled-components/native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import * as MediaLibrary from 'expo-media-library';
-import {useEffect, useState} from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
+import React, {useCallback, useEffect, useState} from 'react';
 import {RootStackParamList} from '../shared/shared.types';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {FlatList, ScaledSize, useWindowDimensions} from 'react-native';
+import {useCameraRoll} from '@react-native-camera-roll/camera-roll';
 
 type PhotoNavigationProps = NativeStackScreenProps<
   RootStackParamList,
@@ -41,7 +40,7 @@ const AssetPhotoItem = styled.Image<{width: number}>`
   height: ${props => props.width / 4}px;
 `;
 
-const AssetPhotoItemIcon = styled(Ionicons)`
+const AssetPhotoItemIcon = styled(Icon)`
   position: absolute;
   bottom: 3px;
   right: 3px;
@@ -59,42 +58,20 @@ const HeaderRightText = styled.Text`
 
 const SelectPhoto = ({navigation}: PhotoNavigationProps) => {
   const {width}: ScaledSize = useWindowDimensions();
-  const [canAccessPhotoGallery, setCanAccessPhotoGallery] =
-    useState<boolean>(false);
-  const [assetPhotos, setAssetPhotos] = useState<MediaLibrary.Asset[]>([]);
-  const [totalPhotos, setTotalPhotos] = useState<number>(0);
   const [chosenPhotoUri, setChosenPhotoUri] = useState<string | undefined>('');
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [pageSize, setPageSize] = useState(40); // 초기 랜더링되는 사진의 개수
+  const [photos2, getPhotos] = useCameraRoll();
 
-  const handleGetPhotosFromGallery = async (): Promise<void> => {
-    if (canAccessPhotoGallery === false) {
-      return;
-    }
-    // const albums: MediaLibrary.Album[] = await MediaLibrary.getAlbumsAsync();
-    const pagedInfo: MediaLibrary.PagedInfo<MediaLibrary.Asset> =
-      await MediaLibrary.getAssetsAsync();
-    setAssetPhotos(pagedInfo.assets);
-    setTotalPhotos(pagedInfo.totalCount);
-  };
+  useEffect(() => {
+    fetchPhotosFromAlbum();
+  }, []);
 
-  const handleGetPhotoGalleryPermission = async (): Promise<void> => {
-    const permissionResponse: MediaLibrary.PermissionResponse =
-      await MediaLibrary.getPermissionsAsync();
-
-    if (permissionResponse.status !== 'granted') {
-      const permissionResponse: MediaLibrary.PermissionResponse =
-        await MediaLibrary.requestPermissionsAsync();
-      if (permissionResponse.status === 'granted') {
-        setCanAccessPhotoGallery(true);
-      }
-    } else if (permissionResponse.status === 'granted') {
-      setCanAccessPhotoGallery(true);
-    }
-  };
-
-  const handleChoosePhoto = async (assetPhotoId: string): Promise<void> => {
-    const assetInfo: MediaLibrary.AssetInfo =
-      await MediaLibrary.getAssetInfoAsync(assetPhotoId);
-    setChosenPhotoUri(assetInfo.localUri);
+  const fetchPhotosFromAlbum = () => {
+    getPhotos({first: pageSize}).then(result => {
+      const assets = result.edges.map((item: any) => item.node.image.uri);
+      setPhotos(assets);
+    });
   };
 
   const handleNavigateToUploadPhotoScreen = (
@@ -105,20 +82,15 @@ const SelectPhoto = ({navigation}: PhotoNavigationProps) => {
     });
   };
 
-  const renderItem = ({item: assetPhoto}: any) => {
+  // FlatList Rendering Component
+  const _RenderItem = useCallback(({item}: any) => {
+    const uri = item.node.image.uri; // 각 항목에서 uri를 추출합니다.
     return (
-      <TouchableOpacity onPress={() => handleChoosePhoto(assetPhoto.id)}>
-        <AssetPhotoItem width={width} source={{uri: assetPhoto.uri}} />
-        {assetPhoto.uri === chosenPhotoUri && (
-          <AssetPhotoItemIcon name="checkbox" size={16} color="white" />
-        )}
-      </TouchableOpacity>
+      <AssetPhotoItem width={width} source={{uri}} /> // uri를 source로 전달합니다.
     );
-  };
-
+  }, []);
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: `사진 (${totalPhotos})`,
       headerRight: () => {
         return (
           <HeaderRightContainer
@@ -128,21 +100,7 @@ const SelectPhoto = ({navigation}: PhotoNavigationProps) => {
         );
       },
     });
-  }, [totalPhotos, chosenPhotoUri]);
-
-  useEffect(() => {
-    handleGetPhotoGalleryPermission();
-  }, []);
-
-  useEffect(() => {
-    handleGetPhotosFromGallery();
-  }, [canAccessPhotoGallery]);
-
-  useEffect(() => {
-    if (assetPhotos[0]?.uri) {
-      setChosenPhotoUri(assetPhotos[0].uri);
-    }
-  }, [assetPhotos]);
+  }, [chosenPhotoUri]);
 
   return (
     <Container>
@@ -154,9 +112,9 @@ const SelectPhoto = ({navigation}: PhotoNavigationProps) => {
       <BottomPhotoContainer>
         <FlatListContainer
           numColumns={4}
-          data={assetPhotos}
-          renderItem={renderItem}
-          keyExtractor={(assetPhoto: any) => assetPhoto.id}
+          data={photos2.edges}
+          renderItem={_RenderItem}
+          keyExtractor={(item, index) => '#' + index.toString()}
         />
       </BottomPhotoContainer>
     </Container>

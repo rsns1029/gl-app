@@ -9,7 +9,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 
-const PhotoNavigation = () => {
+const PhotoNav = () => {
   const isDarkMode: 'light' | 'dark' = useReactiveVar(colorModeVar);
 
   return (
@@ -46,13 +46,13 @@ const PhotoNavigation = () => {
           </Stack.Navigator>
         )}
       </Tab.Screen>
-      <Tab.Screen
-        name="TabTakePhoto"
-        component={TakePhoto}
-        options={{title: '사진 촬영'}}
-      />
+      {/*<Tab.Screen*/}
+      {/*  name="TabTakePhoto"*/}
+      {/*  component={TakePhoto}*/}
+      {/*  options={{title: '사진 촬영'}}*/}
+      {/*/>*/}
     </Tab.Navigator>
   );
 };
 
-export default PhotoNavigation;
+export default PhotoNav;

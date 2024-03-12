@@ -28,7 +28,6 @@ export type RootStackParamList = {
   StackSearch: any;
   StackPhoto: any;
   TabSelectPhoto: any;
-  TabTakePhoto: any;
   StackUploadPhotoNavigation: any;
 };
 

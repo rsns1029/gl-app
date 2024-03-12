@@ -6,11 +6,15 @@ import {useTheme} from 'styled-components';
 import ProfileStackNav from './ProfileStackNav';
 import {RootStackParamList} from '../shared/shared.types.ts';
 import UploadPhotoNav from './UploadPhotoNav';
+import PhotoNav from './PhotoNav';
+import {colorModeVar} from '../apollo';
+import {useReactiveVar} from '@apollo/client';
 
 const Nav = createStackNavigator<RootStackParamList>();
 
 export default function LoggedInNav() {
   const theme = useTheme();
+  const isDarkMode: 'light' | 'dark' = useReactiveVar(colorModeVar);
 
   return (
     <Nav.Navigator
@@ -36,8 +40,20 @@ export default function LoggedInNav() {
       />
       <Nav.Screen
         name="StackPhotoNavigation"
+        component={PhotoNav}
         options={{headerShown: false}}
+      />
+      <Nav.Screen
+        name="StackUploadPhotoNavigation"
         component={UploadPhotoNav}
+        options={{
+          headerTitle: '사진 업로드',
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: isDarkMode === 'light' ? 'white' : 'black',
+          },
+          headerTintColor: isDarkMode === 'light' ? 'black' : 'white',
+        }}
       />
     </Nav.Navigator>
   );
