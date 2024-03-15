@@ -39,6 +39,7 @@ const CaptionTextInput = styled.TextInput`
   background-color: ${props => props.theme.bgColor};
   padding: 12px 20px 12px 10px;
   border-radius: 5px;
+  color: ${props => props.theme.fontColor};
 `;
 
 const HeaderRightContainer = styled.TouchableOpacity`
@@ -53,27 +54,27 @@ const HeaderRightText = styled.Text`
 
 const UploadPhotoNav = ({navigation, route}: UploadPhotoNavigationProps) => {
   const {control, handleSubmit, getValues} = useForm<UploadPhotoFormData>();
-
   const [uploadPhotoMutation, {loading: uploadPhotoLoading}] =
-    useUploadPhotoMutation({
-      update: (cache, {data}) => {
-        if (data?.uploadPhoto.ok === true) {
-          cache.modify({
-            id: 'ROOT_QUERY',
-            fields: {
-              seeFeed(prev) {
-                const result = {
-                  ...prev,
-                  photos: [data.uploadPhoto.photo, ...prev.photos],
-                };
-                return result;
-              },
-            },
-          });
-          navigation.navigate('StackTabNavigation');
-        }
-      },
-    });
+    useUploadPhotoMutation();
+
+  const handleUploadPhoto = async () => {
+    try {
+      const {data} = await uploadPhotoMutation({
+        variables: {
+          ufile: route.params?.photoUri, // photoUri를 업로드에 사용할 변수로 전달합니다.
+        },
+      });
+
+      if (data?.uploadPhoto?.file) {
+        // 업로드가 성공하면 해당 화면을 닫거나 다른 화면으로 이동할 수 있습니다.
+        console.log('업로드 성공 ........ file : ', data?.uploadPhoto.file);
+        navigation.navigate('MyProfile');
+      }
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      // 업로드에 실패한 경우에 대한 처리를 추가할 수 있습니다.
+    }
+  };
 
   const onValid = (): void => {
     const {text} = getValues();

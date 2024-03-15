@@ -210,7 +210,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
         onPress={() => {
           /* 아무 동작 없음 */
         }}>
-        <ProfilePhoto width={width} source={{uri: photo.photoUrl}} />
+        <ProfilePhoto width={width} source={{uri: photo.file}} />
       </ProfilePhotoContainer>
     );
   };
@@ -298,7 +298,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
               onRefresh={onRefresh}
-              data={seeProfileData?.seeProfile.user?.photos}
+              data={meData?.me.photos}
               renderItem={renderItem}
               keyExtractor={(photo: any) => String(photo.id)}
             />

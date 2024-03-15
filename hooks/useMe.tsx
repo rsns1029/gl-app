@@ -12,8 +12,8 @@ const ME_QUERY = gql`
       avatar
       email
       photos {
-      id
-      file
+        id
+        file
       }
     }
   }

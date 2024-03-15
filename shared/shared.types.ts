@@ -28,7 +28,7 @@ export type RootStackParamList = {
   StackSearch: any;
   StackPhoto: any;
   TabSelectPhoto: any;
-  StackUploadPhotoNavigation: any;
+  StackUploadPhotoNavigation: {photoUri: String} | undefined;
 };
 
 export interface User {

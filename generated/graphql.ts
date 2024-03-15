@@ -441,7 +441,7 @@ export type SeeProfileQueryVariables = Exact<{
 }>;
 
 
-export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, username: string, followers?: Array<{ __typename?: 'User', id: number, username: string } | null> | null, following?: Array<{ __typename?: 'User', id: number, username: string } | null> | null } | null };
+export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, username: string, photos?: Array<{ __typename?: 'Photo', id: number, file: string } | null> | null } | null };
 
 export type SeeRoomQueryVariables = Exact<{
   id: Scalars['Int']['input'];
@@ -883,15 +883,11 @@ export const SeeProfileDocument = gql`
     query SeeProfile($seeProfileId: Int!) {
   seeProfile(id: $seeProfileId) {
     id
+    photos {
+      id
+      file
+    }
     username
-    followers {
-      id
-      username
-    }
-    following {
-      id
-      username
-    }
   }
 }
     `;
