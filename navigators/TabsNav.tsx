@@ -6,7 +6,7 @@ import {useTheme} from 'styled-components';
 import MapScreen from '../screens/MapScreen';
 import {RootStackParamList} from '../shared/shared.types.ts';
 import ProfileStackNav from './ProfileStackNav.tsx';
-import Search from '../screens/Search';
+import PhotoNav from './PhotoNav';
 
 const Tabs = createBottomTabNavigator<RootStackParamList>();
 
@@ -52,7 +52,7 @@ export default function TabsNav() {
       />
       <Tabs.Screen
         name="TabCamera"
-        component={Search}
+        component={PhotoNav}
         listeners={({navigation, route}) => ({
           tabPress: event => {
             event.preventDefault();

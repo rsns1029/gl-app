@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import React, {useState} from 'react';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {launchCamera, MediaType, PhotoQuality} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';

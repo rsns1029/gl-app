@@ -1,6 +1,4 @@
 import TakePhoto from '../screens/TakePhoto';
-import SelectPhoto from '../screens/SelectPhoto';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {colorModeVar} from '../apollo';
 import {useReactiveVar} from '@apollo/client';
 import {createStackNavigator} from '@react-navigation/stack';

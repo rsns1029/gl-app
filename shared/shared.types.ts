@@ -1,5 +1,4 @@
 import {Location} from '../generated/graphql';
-import {EditProfileProps} from '../screens/EditProfile.tsx';
 
 export type RootStackParamList = {
   Chats: any;
@@ -29,6 +28,8 @@ export type RootStackParamList = {
   StackPhoto: any;
   TabSelectPhoto: any;
   StackUploadPhotoNavigation: {photoUri: String} | undefined;
+  TabCamera: any;
+  TabTakePhoto: undefined;
 };
 
 export interface User {

@@ -1,11 +1,12 @@
-import React from 'react';
-import {Text} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, ScrollView, Text} from 'react-native';
 import styled from 'styled-components/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../shared/shared.types.ts';
 import useMe from '../hooks/useMe';
+import {useEditProfileMutation} from '../generated/graphql';
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   flex: 1;
   width: 100%;
 `;
@@ -77,6 +78,7 @@ const ActionText = styled.Text`
 const CompleteButtonText = styled.Text`
   color: ${props => props.theme.fontColor};
   font-size: 14px;
+  font-weight: bold;
 `;
 
 type EditProfileNavigationProps = NativeStackScreenProps<
@@ -94,53 +96,131 @@ export interface EditProfileProps {
 const EditProfile = ({route, navigation}: EditProfileNavigationProps) => {
   const {data: meData} = useMe();
 
+  const [currentPasswordValue, setCurrentPasswordValue] = useState<string>('');
+  // 새 비밀번호
+  const [newPasswordValue, setNewPasswordValue] = useState<string>('');
+  // 새 비밀번호 확인
+  const [confirmNewPasswordValue, setConfirmNewPasswordValue] =
+    useState<string>('');
+
+  // 새 비밀번호 이벤트
+  const onChangeNewPassword = useCallback((text: string) => {
+    setNewPasswordValue(text);
+    console.log('new password : ', text);
+  }, []);
+
+  // 새 비밀번호 확인 이벤트
+  const onChangeConfirmNewPassword = useCallback(
+    (text: string) => {
+      setConfirmNewPasswordValue(text);
+      console.log('confirm new password', text);
+    },
+    [newPasswordValue],
+  );
+
+  const [editProfileMutation, {data}] = useEditProfileMutation({
+    variables: newPasswordValue,
+  });
+
+  const handleComplete = useCallback(() => {
+    if (!currentPasswordValue) {
+      Alert.alert('Error', 'Please enter a Current Password');
+      return;
+    }
+    if (!newPasswordValue) {
+      Alert.alert('Error', 'Please enter a New Password');
+      return;
+    }
+
+    if (!confirmNewPasswordValue) {
+      Alert.alert('Error', 'Please enter a Confirm New Password');
+      return;
+    }
+
+    /**
+     * current password check 로직 필요(modify edit profile resolver)
+     */
+    if (newPasswordValue === confirmNewPasswordValue) {
+      // 새 비밀번호와 확인 비밀번호가 일치하는 경우
+      editProfileMutation({variables: {password: newPasswordValue}});
+    } else {
+      // 새 비밀번호와 확인 비밀번호가 일치하지 않는 경우
+      Alert.alert('Error', 'Passwords do not match');
+    }
+  }, [newPasswordValue, confirmNewPasswordValue, editProfileMutation]);
+
+  useEffect(() => {
+    if (data?.editProfile?.ok) {
+      console.log('Password updated successfully');
+      navigation.goBack(); // 예시로 뒤로 가기
+    } else {
+      console.log('error : ', data?.editProfile.error);
+    }
+  }, [data, navigation]);
+
   return (
-    <Container>
-      <Header>
-        <CancelButton onPress={() => navigation.goBack()}>
-          <Text />
-        </CancelButton>
-        <CompleteButton onPress={() => navigation.goBack()}>
-          <CompleteButtonText>완료</CompleteButtonText>
-        </CompleteButton>
-      </Header>
-      <ProfileImageContainer>
-        {meData?.me.avatar ? (
-          <ProfileImage source={{uri: meData.me.avatar}} />
-        ) : (
-          <ProfileImage source={require('../assets/basic_user.jpeg')} />
-        )}
-        <ProfileImageText>Edit Avatar</ProfileImageText>
-      </ProfileImageContainer>
+    <ScrollView>
+      <Container>
+        <Header>
+          <CancelButton onPress={() => navigation.goBack()}>
+            <Text />
+          </CancelButton>
+          <CompleteButton onPress={handleComplete}>
+            <CompleteButtonText>Complete</CompleteButtonText>
+          </CompleteButton>
+        </Header>
+        <ProfileImageContainer>
+          {meData?.me.avatar ? (
+            <ProfileImage source={{uri: meData.me.avatar}} />
+          ) : (
+            <ProfileImage source={require('../assets/basic_user.jpeg')} />
+          )}
+          <ProfileImageText>Edit Avatar</ProfileImageText>
+        </ProfileImageContainer>
 
-      <InputContainer>
-        <InputLabel>username</InputLabel>
-        <TextInputStyled
-          placeholder="name"
-          defaultValue={meData?.me.username}
-        />
-      </InputContainer>
+        <InputContainer>
+          <InputLabel>Username</InputLabel>
+          <TextInputStyled
+            placeholder="name"
+            defaultValue={meData?.me.username}
+          />
+        </InputContainer>
 
-      <InputContainer>
-        <InputLabel>email</InputLabel>
-        <TextInputStyled placeholder="email" defaultValue={meData?.me.email} />
-      </InputContainer>
+        <InputContainer>
+          <InputLabel>Password</InputLabel>
+          <TextInputStyled
+            placeholder="Current Password"
+            value={currentPasswordValue}
+            secureTextEntry={true} // 비밀번호 입력 시 암호화하여 표시
+          />
+        </InputContainer>
 
-      <InputContainer>
-        <InputLabel>Instagram Username</InputLabel>
-        <TextInputStyled placeholder="Instagram Username" />
-      </InputContainer>
+        <InputContainer>
+          <InputLabel>New Password</InputLabel>
+          <TextInputStyled
+            placeholder="New Password"
+            value={newPasswordValue}
+            onChangeText={onChangeNewPassword}
+            secureTextEntry={true} // 비밀번호 입력 시 암호화하여 표시
+          />
+        </InputContainer>
 
-      <InputContainer>
-        <InputLabel>Self-Introduction</InputLabel>
-        <TextInputStyled placeholder="Self-Introduction" />
-      </InputContainer>
+        <InputContainer>
+          <InputLabel>Confirm New Password</InputLabel>
+          <TextInputStyled
+            placeholder="Confirm New Password"
+            value={confirmNewPasswordValue}
+            onChangeText={onChangeConfirmNewPassword}
+            secureTextEntry={true} // 비밀번호 입력 시 암호화하여 표시
+          />
+        </InputContainer>
 
-      <ActionsContainer>
-        <ActionText>프로페셔널 계정으로 전환</ActionText>
-        <ActionText>개인정보 설정</ActionText>
-      </ActionsContainer>
-    </Container>
+        <ActionsContainer>
+          <ActionText>프로페셔널 계정으로 전환</ActionText>
+          <ActionText>개인정보 설정</ActionText>
+        </ActionsContainer>
+      </Container>
+    </ScrollView>
   );
 };
 

@@ -2,7 +2,7 @@ import Loading from '../components/Loading';
 import styled from 'styled-components/native';
 import KeyboardAvoidingLayout from '../components/KeyboardAvoidingLayout';
 import {useEffect} from 'react';
-import {useForm, Controller} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {ReactNativeFile} from 'apollo-upload-client';
 import {RootStackParamList} from '../shared/shared.types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -109,7 +109,7 @@ const UploadPhotoNav = ({navigation, route}: UploadPhotoNavigationProps) => {
   return (
     <KeyboardAvoidingLayout>
       <Container>
-        <Photo source={{uri: route.params?.photoUri}} />
+        <Photo source={{uri: route.params?.photoUri.toString()}} />
         <CaptionContainer>
           <Controller
             name="text"

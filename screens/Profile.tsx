@@ -1,7 +1,7 @@
 import Loading from '../components/Loading';
 import styled from 'styled-components/native';
 import {logUserOut} from '../apollo';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {RootStackParamList} from '../shared/shared.types';
 import {FlatList, useWindowDimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -170,23 +170,14 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
   const handleNavigateToStackRoomsNavigation = null;
   const isMe = true;
   const handleNavigateToFollowersScreen = (): void => {
-    navigation.navigate('StackFollowers', {
-      username: data?.seeProfile.username,
-      followers: data.seeProfile.followers,
-    });
+    navigation.navigate('StackFollowers', {});
   };
   const handleNavigateToFollowingScreen = (): void => {
-    navigation.navigate('StackFollowing', {
-      username: data?.seeProfile.username,
-      followers: data.seeProfile.following,
-    });
+    navigation.navigate('StackFollowing', {});
   };
 
   const handleNavigateToEditProfileScreen = (): void => {
-    navigation.navigate('StackEditProfile', {
-      username: data?.seeProfile.username,
-      following: data?.seeProfile?.following,
-    });
+    navigation.navigate('StackEditProfile', {});
   };
 
   // const handleNavigateToStackRoomsNavigation = (): void => {
@@ -233,9 +224,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
               </AvatarContainer>
               <UserInfoContainer width={width}>
                 <PostContainer>
-                  <CommonNumber>
-                    {seeProfileData?.seeProfile.user?.totalPhotos ?? 0}
-                  </CommonNumber>
+                  <CommonNumber>{meData?.me?.photos?.length ?? 0}</CommonNumber>
                   <CommonText>Post</CommonText>
                 </PostContainer>
                 <FollowerContainer onPress={handleNavigateToFollowersScreen}>
@@ -258,14 +247,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                     <LeftActionButtonText>Edit Profile</LeftActionButtonText>
                   </LeftActionButton>
                 ) : (
-                  <LeftActionButton
-                    /*onPress={() =>
-                      handleToggleFollow(
-                        seeProfileData?.seeProfile.user?.isFollowing,
-                        seeProfileData?.seeProfile.user?.username,
-                      )
-                    }*/
-                    disabled={true}>
+                  <LeftActionButton disabled={true}>
                     <LeftActionButtonText>
                       {/*{followUserLoading === true ||*/}
                       {/*unfollowUserLoading === true ? (*/}
@@ -284,7 +266,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                     <RightActionText>Logout</RightActionText>
                   </RightAction>
                 ) : (
-                  <RightAction onPress={handleNavigateToStackRoomsNavigation}>
+                  <RightAction>
                     <RightActionText>메시지</RightActionText>
                   </RightAction>
                 )}
