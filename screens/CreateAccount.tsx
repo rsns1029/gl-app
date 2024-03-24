@@ -30,7 +30,9 @@ export default function CreateAccount({navigation}: CreateAccountProps) {
       if (isSignedIn) {
         await GoogleSignin.signOut();
       }
-      await auth().signOut();
+      if (auth().currentUser) {
+        await auth().signOut();
+      }
       navigation.navigate('Welcome');
     } catch (error) {
       console.error('Sign out error:', error);

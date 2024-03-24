@@ -8,7 +8,7 @@ import {darkTheme, lightTheme} from './styles/themes.ts';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import LoggedInNav from './navigators/LoggedInNav.tsx';
 import LoggedOutNav from './navigators/LoggedOutNav.tsx';
-import {apolloDevToolsInit} from 'react-native-apollo-devtools-client';
+//import {apolloDevToolsInit} from 'react-native-apollo-devtools-client';
 import {loadErrorMessages, loadDevMessages} from '@apollo/client/dev';
 
 function App(): React.JSX.Element | null {

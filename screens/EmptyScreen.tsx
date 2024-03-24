@@ -20,8 +20,13 @@ const EmptyScreen: React.FC<EmptyScreenProps> = ({navigation}) => {
   const handleLogout = async () => {
     try {
       await logUserOut();
-      await GoogleSignin.signOut();
-      await auth().signOut();
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      if (isSignedIn) {
+        await GoogleSignin.signOut();
+      }
+      if (auth().currentUser) {
+        await auth().signOut();
+      }
     } catch (error) {
       console.error('Logout failed', error);
     }

@@ -8,19 +8,19 @@ const InstagramLoginScreen = () => {
 
   const [code, setCode] = useState(null);
 
-  const clientId = 'YOUR_CLIENT_ID';
-  const redirectUri = 'YOUR_REDIRECT_URI';
+  const clientId = '5b5430f80f04252344a4c1c21350dbae';
+  const redirectUri = 'https://2465-39-124-82-67.ngrok-free.app';
   const responseType = 'code';
   const instagramAuthURL = `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user_profile,user_media&response_type=${responseType}`;
 
-  const handleWebViewNavigationStateChange = (event: {url: string}) => {
+  const handleWebViewNavigationStateChange = (event) => {
     if (event.url.startsWith(redirectUri)) {
-      const code = event.url.split('=')[1].split('#')[0];
-      //setCode(code);
+      const urlCode = event.url.split('=')[1].split('#')[0];
+     // setCode(urlCode);
       setModalVisible(false);
+      console.error('Insta 로그인 setCode:', urlCode);
     }
   };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity

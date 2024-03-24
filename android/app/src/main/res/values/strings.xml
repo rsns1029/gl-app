@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">glApp</string>
+    <string name="facebook_app_id">418409610692025</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">5b5430f80f04252344a4c1c21350dbae</string>
 </resources>

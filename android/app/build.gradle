@@ -81,6 +81,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [
+            appAuthRedirectScheme: 'myapp'
+        ]
     }
     signingConfigs {
         debug {
@@ -107,7 +110,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    implementation("com.facebook.react:flipper-integration")
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+ //   implementation("com.facebook.react:flipper-integration")
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout")
     implementation platform('com.google.firebase:firebase-bom:32.7.1')
     implementation ('com.google.firebase:firebase-analytics')

@@ -15,6 +15,8 @@ import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {FragmentDefinitionNode, OperationDefinitionNode} from 'graphql';
 import {LocationRoom} from './generated/graphql.ts';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 export const isLoggedInVar = makeVar<boolean>(false);
 export const tokenVar = makeVar<string | null>(null);
@@ -32,16 +34,24 @@ export const logUserOut = async (): Promise<void> => {
   await AsyncStorage.removeItem(TOKEN);
   isLoggedInVar(false);
   tokenVar('');
+  const isSignedIn = await GoogleSignin.isSignedIn();
+  if (isSignedIn) {
+    await GoogleSignin.signOut();
+  }
+  if (auth().currentUser) {
+    await auth().signOut();
+  }
 };
 
 const uploadHttpLink: ApolloLink = createUploadLink({
-  uri: 'https://a224-39-124-82-67.ngrok-free.app/graphql',
+  uri: 'https://green-light-backend-04c79b6adf93.herokuapp.com/graphql',
+  //uri: 'https://cd05-39-124-82-67.ngrok-free.app/graphql',
 });
 
 const wsLink: GraphQLWsLink = new GraphQLWsLink(
   createClient({
-    url: 'https://a224-39-124-82-67.ngrok-free.app/graphql',
-    
+    url: 'ws://green-light-backend-04c79b6adf93.herokuapp.com/graphql',
+   // url: 'https://cd05-39-124-82-67.ngrok-free.app/graphql',
     connectionParams: () => {
       return {
         token: tokenVar(),
