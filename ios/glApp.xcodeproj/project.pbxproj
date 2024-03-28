@@ -63,6 +63,7 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-glApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-glApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = glApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-glApp-glAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-glApp-glAppTests.release.xcconfig"; path = "Target Support Files/Pods-glApp-glAppTests/Pods-glApp-glAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		DF09448E2B9DBBD5001B89C2 /* node_modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = node_modules; path = ../node_modules; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -163,6 +164,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				DF09448E2B9DBBD5001B89C2 /* node_modules */,
 				36A024DC2B5985B10005B78E /* Fonts */,
 				36A024DA2B59815B0005B78E /* main.jsbundle */,
 				13B07FAE1A68108700A75B9A /* glApp */,

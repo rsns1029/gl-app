@@ -1,24 +1,16 @@
 import Loading from '../components/Loading';
 import styled from 'styled-components/native';
 import {logUserOut} from '../apollo';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {RootStackParamList} from '../shared/shared.types';
 import {FlatList, useWindowDimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useSeeProfileQuery} from '../generated/graphql';
 import useMe from '../hooks/useMe.tsx';
-import {useQuery, gql} from '@apollo/client';
-
-// import {
-//   //useFollowUserMutation,
-//   useSeeProfileQuery,
-//   useSeeProfileQuery,
-//   //useUnfollowUserMutation,
-// } from '../generated/graphql';
 
 type ProfileNavigationProps = NativeStackScreenProps<
   RootStackParamList,
-  'StackProfile'
+  'MyProfile'
 >;
 
 const Container = styled.View`
@@ -165,12 +157,6 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
 
   const {data: meData} = useMe();
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: meData?.me.username, // 변경할 헤더 타이틀
-    });
-  }, []);
-
   const {data} = useSeeProfileQuery({
     variables: {
       seeProfileId: meData?.me.id, // 프로필 ID를 변수로 전달합니다.
@@ -184,93 +170,15 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
   const handleNavigateToStackRoomsNavigation = null;
   const isMe = true;
   const handleNavigateToFollowersScreen = (): void => {
-    navigation.navigate('StackFollowers', {
-      username: data?.seeProfile.username,
-      followers: data.seeProfile.followers,
-    });
+    navigation.navigate('StackFollowers', {});
   };
   const handleNavigateToFollowingScreen = (): void => {
-    navigation.navigate('StackFollowing', {
-      username: data?.seeProfile.username,
-      followers: data.seeProfile.following,
-    });
+    navigation.navigate('StackFollowing', {});
   };
 
   const handleNavigateToEditProfileScreen = (): void => {
-    navigation.navigate('StackEditProfile', {
-      username: data?.seeProfile.username,
-      following: data?.seeProfile?.following,
-    });
+    navigation.navigate('StackEditProfile', {});
   };
-  // const {
-  //   data: seeProfileData,
-  //   loading: seeProfileLoading,
-  //   refetch,
-  // } = useSeeProfileQuery({variables: {username: route.params?.username}});
-
-  // const [followUserMutation, {loading: followUserLoading}] =
-  //   useFollowUserMutation({
-  //     update: (cache, {data}) => {
-  //       if (data?.followUser.ok === false) {
-  //         return;
-  //       }
-  //
-  //       // followUsername = data?.followUser.user?.username;
-  //       cache.modify({
-  //         id: `User:${data?.followUser.user?.id}`,
-  //         fields: {
-  //           isFollowing: (isFollowing: boolean) => true,
-  //           totalFollowers: (totalFollowers: number) => totalFollowers + 1,
-  //         },
-  //       });
-  //       cache.modify({
-  //         id: `User:${loggedInUser?.id}`,
-  //         fields: {
-  //           totalFollowing: (totalFollowing: number) => totalFollowing + 1,
-  //         },
-  //       });
-  //     },
-  //   });
-  // const [unfollowUserMutation, {loading: unfollowUserLoading}] =
-  //   useUnfollowUserMutation({
-  //     update: (cache, {data}) => {
-  //       if (data?.unfollowUser.ok === false) {
-  //         return;
-  //       }
-  //
-  //       // unfollowUsername = data?.unfollowUser.user?.username;
-  //       cache.modify({
-  //         id: `User:${data?.unfollowUser.user?.id}`,
-  //         fields: {
-  //           isFollowing: (isFollowing: boolean) => false,
-  //           totalFollowers: (totalFollowers: number) => totalFollowers - 1,
-  //         },
-  //       });
-  //       cache.modify({
-  //         id: `User:${loggedInUser?.id}`,
-  //         fields: {
-  //           totalFollowing: (totalFollowing: number) => totalFollowing - 1,
-  //         },
-  //       });
-  //     },
-  //   });
-
-  // const handleToggleFollow = (
-  //   isFollowing: boolean | undefined,
-  //   username: string | undefined,
-  // ): void => {
-  //   if (isFollowing === undefined || username === undefined) {
-  //     return;
-  //   }
-  //   if (followUserLoading === true || unfollowUserLoading === true) {
-  //     return;
-  //   }
-  //   if (isFollowing === false) {
-  //     followUserMutation({variables: {username}});
-  //   } else if (isFollowing === true) {
-  //     unfollowUserMutation({variables: {username}});
-  //   }
-  // };
 
   // const handleNavigateToStackRoomsNavigation = (): void => {
   //   navigation.navigate('StackRoomsNavigation');
@@ -293,7 +201,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
         onPress={() => {
           /* 아무 동작 없음 */
         }}>
-        <ProfilePhoto width={width} source={{uri: photo.photoUrl}} />
+        <ProfilePhoto width={width} source={{uri: photo.file}} />
       </ProfilePhotoContainer>
     );
   };
@@ -316,9 +224,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
               </AvatarContainer>
               <UserInfoContainer width={width}>
                 <PostContainer>
-                  <CommonNumber>
-                    {seeProfileData?.seeProfile.user?.totalPhotos ?? 0}
-                  </CommonNumber>
+                  <CommonNumber>{meData?.me?.photos?.length ?? 0}</CommonNumber>
                   <CommonText>Post</CommonText>
                 </PostContainer>
                 <FollowerContainer onPress={handleNavigateToFollowersScreen}>
@@ -341,14 +247,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                     <LeftActionButtonText>Edit Profile</LeftActionButtonText>
                   </LeftActionButton>
                 ) : (
-                  <LeftActionButton
-                    /*onPress={() =>
-                      handleToggleFollow(
-                        seeProfileData?.seeProfile.user?.isFollowing,
-                        seeProfileData?.seeProfile.user?.username,
-                      )
-                    }*/
-                    disabled={true}>
+                  <LeftActionButton disabled={true}>
                     <LeftActionButtonText>
                       {/*{followUserLoading === true ||*/}
                       {/*unfollowUserLoading === true ? (*/}
@@ -367,7 +266,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
                     <RightActionText>Logout</RightActionText>
                   </RightAction>
                 ) : (
-                  <RightAction onPress={handleNavigateToStackRoomsNavigation}>
+                  <RightAction>
                     <RightActionText>메시지</RightActionText>
                   </RightAction>
                 )}
@@ -381,7 +280,7 @@ const Profile = ({navigation}: ProfileNavigationProps) => {
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
               onRefresh={onRefresh}
-              data={seeProfileData?.seeProfile.user?.photos}
+              data={meData?.me.photos}
               renderItem={renderItem}
               keyExtractor={(photo: any) => String(photo.id)}
             />

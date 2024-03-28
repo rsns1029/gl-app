@@ -34,7 +34,6 @@ const Username = styled.Text`
 
 const Followering = ({route}: FolloweringProps) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const {data: meData} = useMe();
 
   const {data, refetch} = useSeeFollowingQuery({
     variables: {

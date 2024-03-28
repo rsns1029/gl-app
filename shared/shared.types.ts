@@ -1,5 +1,4 @@
 import {Location} from '../generated/graphql';
-import {EditProfileProps} from '../screens/EditProfile.tsx';
 
 export type RootStackParamList = {
   Chats: any;
@@ -15,7 +14,7 @@ export type RootStackParamList = {
   StepTwo: any;
   StepThree: any;
   Rooms: any;
-  MyProfile: undefined;
+  MyProfile: any;
   Map: undefined;
   Matches: undefined;
   StackProfileNavigation: any;
@@ -24,6 +23,13 @@ export type RootStackParamList = {
   StackProfile: any;
   StackEditProfile: any;
   StackMessagesNav: undefined;
+  StackPhotoNavigation: any;
+  StackSearch: any;
+  StackPhoto: any;
+  TabSelectPhoto: any;
+  StackUploadPhotoNavigation: {photoUri: String} | undefined;
+  TabCamera: any;
+  TabTakePhoto: undefined;
 };
 
 export interface User {

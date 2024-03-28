@@ -415,6 +415,14 @@ export type UpdateLocationMutationVariables = Exact<{
 
 export type UpdateLocationMutation = { __typename?: 'Mutation', updateLocation: { __typename?: 'MutationResponse', id?: number | null, ok: boolean, error?: string | null } };
 
+export type UploadPhotoMutationVariables = Exact<{
+  ufile: Scalars['Upload']['input'];
+}>;
+
+
+export type UploadPhotoMutation = { __typename?: 'Mutation', uploadPhoto?: { __typename?: 'Photo', id: number, file: string, user: { __typename?: 'User', id: number, username: string, avatar?: string | null } } | null };
+
+
 export type SeeFollowingQueryVariables = Exact<{
   page: Scalars['Int']['input'];
 }>;
@@ -434,7 +442,8 @@ export type SeeProfileQueryVariables = Exact<{
 }>;
 
 
-export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, username: string, followers?: Array<{ __typename?: 'User', id: number, username: string } | null> | null, following?: Array<{ __typename?: 'User', id: number, username: string } | null> | null } | null };
+export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, username: string, photos?: Array<{ __typename?: 'Photo', id: number, file: string } | null> | null } | null };
+
 
 export type SeeRoomQueryVariables = Exact<{
   id: Scalars['Int']['input'];
@@ -739,6 +748,46 @@ export function useUpdateLocationMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateLocationMutationHookResult = ReturnType<typeof useUpdateLocationMutation>;
 export type UpdateLocationMutationResult = Apollo.MutationResult<UpdateLocationMutation>;
 export type UpdateLocationMutationOptions = Apollo.BaseMutationOptions<UpdateLocationMutation, UpdateLocationMutationVariables>;
+export const UploadPhotoDocument = gql`
+    mutation UploadPhoto($ufile: Upload!) {
+  uploadPhoto(ufile: $ufile) {
+    id
+    file
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+    `;
+export type UploadPhotoMutationFn = Apollo.MutationFunction<UploadPhotoMutation, UploadPhotoMutationVariables>;
+
+/**
+ * __useUploadPhotoMutation__
+ *
+ * To run a mutation, you first call `useUploadPhotoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadPhotoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadPhotoMutation, { data, loading, error }] = useUploadPhotoMutation({
+ *   variables: {
+ *      ufile: // value for 'ufile'
+ *   },
+ * });
+ */
+export function useUploadPhotoMutation(baseOptions?: Apollo.MutationHookOptions<UploadPhotoMutation, UploadPhotoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadPhotoMutation, UploadPhotoMutationVariables>(UploadPhotoDocument, options);
+      }
+export type UploadPhotoMutationHookResult = ReturnType<typeof useUploadPhotoMutation>;
+export type UploadPhotoMutationResult = Apollo.MutationResult<UploadPhotoMutation>;
+export type UploadPhotoMutationOptions = Apollo.BaseMutationOptions<UploadPhotoMutation, UploadPhotoMutationVariables>;
+
 export const SeeFollowingDocument = gql`
     query SeeFollowing($page: Int!) {
   seeFollowing(page: $page) {
@@ -837,6 +886,11 @@ export const SeeProfileDocument = gql`
     query SeeProfile($seeProfileId: Int!) {
   seeProfile(id: $seeProfileId) {
     id
+    photos {
+      id
+      file
+    }
+    username
     username
     followers {
       id
