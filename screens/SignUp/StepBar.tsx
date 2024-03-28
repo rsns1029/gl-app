@@ -40,6 +40,7 @@ export default function StepBar({
   return (
     <Container style={style}>
       <StepBtn
+        disabled={currentStep > 1}
         onPress={async () => onBeforeNavigate('StepOne')}
         style={{
           backgroundColor: currentStep === 1 ? colors.green : 'gray',

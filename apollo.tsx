@@ -41,6 +41,7 @@ const uploadHttpLink: ApolloLink = createUploadLink({
 const wsLink: GraphQLWsLink = new GraphQLWsLink(
   createClient({
     url: 'ws://green-light-backend-04c79b6adf93.herokuapp.com/graphql',
+
     connectionParams: () => {
       return {
         token: tokenVar(),

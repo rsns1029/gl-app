@@ -422,6 +422,7 @@ export type UploadPhotoMutationVariables = Exact<{
 
 export type UploadPhotoMutation = { __typename?: 'Mutation', uploadPhoto?: { __typename?: 'Photo', id: number, file: string, user: { __typename?: 'User', id: number, username: string, avatar?: string | null } } | null };
 
+
 export type SeeFollowingQueryVariables = Exact<{
   page: Scalars['Int']['input'];
 }>;
@@ -442,6 +443,7 @@ export type SeeProfileQueryVariables = Exact<{
 
 
 export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, username: string, photos?: Array<{ __typename?: 'Photo', id: number, file: string } | null> | null } | null };
+
 
 export type SeeRoomQueryVariables = Exact<{
   id: Scalars['Int']['input'];
@@ -785,6 +787,7 @@ export function useUploadPhotoMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UploadPhotoMutationHookResult = ReturnType<typeof useUploadPhotoMutation>;
 export type UploadPhotoMutationResult = Apollo.MutationResult<UploadPhotoMutation>;
 export type UploadPhotoMutationOptions = Apollo.BaseMutationOptions<UploadPhotoMutation, UploadPhotoMutationVariables>;
+
 export const SeeFollowingDocument = gql`
     query SeeFollowing($page: Int!) {
   seeFollowing(page: $page) {
@@ -888,6 +891,15 @@ export const SeeProfileDocument = gql`
       file
     }
     username
+    username
+    followers {
+      id
+      username
+    }
+    following {
+      id
+      username
+    }
   }
 }
     `;

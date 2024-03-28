@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import AuthButton from '../../components/auth/AuthButton';
 import AuthLayout from '../../components/auth/AuthLayout';
 import {TextInput} from '../../components/auth/AuthShared';
@@ -11,6 +11,13 @@ import {
   RootStackParamList,
 } from '../../shared/shared.types';
 import {useValidCreateAccountLazyQuery} from '../../generated/graphql';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import InstagramLoginScreen from '../Auth/InstaLogin';
 
 type StepOneProps = NativeStackScreenProps<RootStackParamList, 'StepOne'>;
 
@@ -29,6 +36,13 @@ export default function StepOne({navigation}: StepOneProps) {
   ): void => {
     setFunction(value);
     setValidated(false);
+  };
+
+  const googleSigninConfigure = () => {
+    GoogleSignin.configure({
+      webClientId:
+        '200851602419-5ebei1h581bd4d93ccpehak6pkuiobk3.apps.googleusercontent.com',
+    });
   };
 
   const [executeQuery, {loading}] = useValidCreateAccountLazyQuery({
@@ -51,7 +65,7 @@ export default function StepOne({navigation}: StepOneProps) {
     },
     onError: error => {
       console.log(error);
-      setErrorMsg('Network issue');
+      //setErrorMsg('Network issue');
     },
   });
 
@@ -86,6 +100,46 @@ export default function StepOne({navigation}: StepOneProps) {
     });
   };
 
+  useEffect(() => {
+    if (username && password && repassword) {
+      handleGoogleNext('StepTwo');
+      setValidated(true);
+    }
+  }, [username, password, repassword]);
+
+  const handleGoogleNext = async (nextPage: keyof RootStackParamList) => {
+    console.log('Email: ', username);
+    setValidated(true);
+    await executeQuery({
+      variables: {username, nextPage},
+    });
+  };
+
+  async function onGoogleButtonPress() {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      //const { idToken } = await GoogleSignin.signIn();
+      const userInfo = await GoogleSignin.signIn();
+      //console.log("구글 토큰: ", idToken);
+
+      const googleCredential = auth.GoogleAuthProvider.credential(
+        userInfo.idToken,
+      );
+      await auth().signInWithCredential(googleCredential);
+      console.log('Email: ', userInfo.user.email);
+      console.log('UserId: ', userInfo.user.id);
+      console.log('UserInfo: ', userInfo.user);
+      setUsername(userInfo.user.email);
+      setPassword(userInfo.user.id);
+      setRepassword(userInfo.user.id);
+      setValidated(true);
+      await handleGoogleNext('StepTwo');
+    } catch (error) {
+      console.error('Google 로그인 실패:', error);
+      setErrorMsg('Fail');
+    }
+  }
+
   const HeaderBar = () => (
     <StepBar
       currentStep={1}
@@ -94,6 +148,7 @@ export default function StepOne({navigation}: StepOneProps) {
   );
 
   useEffect(() => {
+    googleSigninConfigure();
     navigation.setOptions({
       headerTitle: HeaderBar,
     });
@@ -112,6 +167,7 @@ export default function StepOne({navigation}: StepOneProps) {
           onSubmitEditing={() => setActiveInput('password')}
           placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
           onChangeText={text => handleInputChange(setUsername, text)}
+          value={username}
           autoFocus={activeInput === 'username'}
         />
         <TextInput
@@ -120,6 +176,7 @@ export default function StepOne({navigation}: StepOneProps) {
           onSubmitEditing={() => setActiveInput('repassword')}
           placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
           onChangeText={text => handleInputChange(setPassword, text)}
+          value={password}
           secureTextEntry
           autoFocus={activeInput === 'password'}
         />
@@ -128,6 +185,7 @@ export default function StepOne({navigation}: StepOneProps) {
           returnKeyType="done"
           placeholderTextColor={'rgba(255, 255, 255, 0.6)'}
           onChangeText={text => handleInputChange(setRepassword, text)}
+          value={repassword}
           lastOne={true}
           secureTextEntry
           autoFocus={activeInput === 'repassword'}
@@ -136,7 +194,7 @@ export default function StepOne({navigation}: StepOneProps) {
           <Text style={{color: 'red', marginBottom: 10}}>{errorMsg}</Text>
         )}
       </View>
-      <View style={{marginBottom: 150, width: '85%', alignSelf: 'center'}}>
+      <View style={{width: '85%', alignSelf: 'center'}}>
         <AuthButton
           text="Next"
           disabled={false}
@@ -144,6 +202,58 @@ export default function StepOne({navigation}: StepOneProps) {
           onPress={async () => handleNext('StepTwo')}
         />
       </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            onGoogleButtonPress()
+              .then(userInfo => {
+                console.log('Signed in with Google!', userInfo);
+              })
+              .catch(error => console.error(error))
+          }
+          style={styles.google_button}>
+          <View style={styles.iconWrapper}>
+            <Icon name="google" size={24} color="#DB4437" />
+          </View>
+          <Text style={styles.text}>Login Google</Text>
+        </TouchableOpacity>
+        <InstagramLoginScreen />
+      </View>
     </AuthLayout>
   );
 }
+const styles = StyleSheet.create({
+  google_button: {
+    flexDirection: 'row',
+    backgroundColor: 'white', // 구글 버튼의 배경색
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  iconWrapper: {
+    backgroundColor: 'white',
+    marginRight: 10,
+  },
+  text: {
+    color: '#DB4437',
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row', // 버튼들을 수평 방향으로 나열
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20, // 하단 여백 추가
+    padding: 10,
+  },
+});

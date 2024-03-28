@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import MapView, {Marker, Region} from 'react-native-maps';
+import MapView, {Marker, Circle, Region} from 'react-native-maps';
 import {customMapStyle} from '../../styles/mapStyle.ts';
 import {
   ApolloCache,
@@ -58,8 +58,6 @@ export default function RealTimeMap({
   initialLatitude,
   initialLongitude,
 }: RealTimeMapProps) {
-  console.log(' initial : ', initialLongitude);
-
   const checkingDigits: number = 4;
   const rerenderThreshHold: number = 0.03;
   const client: ApolloClient<Object> = useApolloClient();
@@ -83,8 +81,6 @@ export default function RealTimeMap({
 
   const realTimeLocationRef = useRef(realTimeLocation);
   realTimeLocationRef.current = realTimeLocation;
-
-  const {data: meData} = useMe();
 
   // const {
   //   data: realTimeData,
@@ -169,7 +165,7 @@ export default function RealTimeMap({
               data: {mapUpdates: realTimeLocation},
             },
           } = options;
-          console.log('realTimeLocation.userId  : ', realTimeLocation.userId);
+          console.log('realTimeLocation.userId  : ', realTimeLocation);
           const locationFragment = client.cache.writeFragment({
             fragment: LOCATION_FRAGMENT,
             data: realTimeLocation,
@@ -206,6 +202,7 @@ export default function RealTimeMap({
     } else {
       console.log('Already Subscribed !!!!!!!!!!!!!!!!!!');
     }
+    console.log('location data : ', locationData);
   }, [locationData, subscribed]);
 
   useEffect(() => {
@@ -283,6 +280,10 @@ export default function RealTimeMap({
           lat: realTimeLocation.latitude,
           lon: realTimeLocation.longitude,
         }).catch(error => console.log('error : ', error));
+        setLastSelectPoint({
+          latitude: realTimeLocation.latitude,
+          longitude: realTimeLocation.longitude,
+        });
       }
     } else {
       console.log('already sending');
@@ -312,9 +313,21 @@ export default function RealTimeMap({
           locationData.selectLocations &&
           locationData.selectLocations.locations &&
           locationData.selectLocations.locations.map(location => {
-            console.log('location @@@@@@@@@: ', location);
             if (location.lat && location.lon) {
               return (
+                <Circle
+                  key={location.userId}
+                  center={{
+                    latitude: location.lat,
+                    longitude: location.lon,
+                  }}
+                  radius={35}
+                  strokeWidth={2}
+                  strokeColor="blue"
+                  fillColor="rgba(135, 206, 235, 0.5)" // 반투명한 하늘색으로 채우기
+                />
+              );
+              /*              return (
                 <Marker
                   key={location.userId} // userId가 키 -> apollo.tsx 에서 캐쉬 설정 필요
                   coordinate={{
@@ -323,7 +336,7 @@ export default function RealTimeMap({
                   }}
                   title={`User ID: ${location.userId}`}
                 />
-              );
+              );*/
             }
           })}
       </MapView>
